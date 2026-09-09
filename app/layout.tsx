@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import SessionAuthProvider from '@/components/providers/SessionAuthProvider';
 
 export const metadata: Metadata = {
-  title: 'RahulTripathi.dev — Build. Explore. Share.',
+  title: 'Rahul Tripathi — Balance by Design',
   description:
     'Cloud Architect, AI Educator, Traveller & Creator. Building in the cloud, exploring the world, and sharing what I learn through blogs, videos, and open-source projects.',
   keywords: [
@@ -19,16 +20,16 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'Rahul Tripathi' }],
   openGraph: {
-    title: 'RahulTripathi.dev — Build. Explore. Share.',
+    title: 'Rahul Tripathi — Balance by Design',
     description:
       'Cloud Architect, AI Educator, Traveller & Creator. Building in the cloud, exploring the world, and sharing what I learn.',
     type: 'website',
     locale: 'en_US',
-    siteName: 'RahulTripathi.dev',
+    siteName: 'Rahul Tripathi',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'RahulTripathi.dev — Build. Explore. Share.',
+    title: 'Rahul Tripathi — Balance by Design',
     description:
       'Cloud Architect, AI Educator, Traveller & Creator.',
   },
@@ -63,7 +64,7 @@ export default function RootLayout({
         <div className="stars-bg" aria-hidden="true" />
 
         {/* Main content */}
-        {children}
+        <SessionAuthProvider>{children}</SessionAuthProvider>
       </body>
     </html>
   );

@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Shuffle, RotateCcw, Sun, CloudRain, CloudLightning, Plane, Bird, Bot, Briefcase, Camera, Cloud } from 'lucide-react';
+import React from 'react';
+import { X, Sun, CloudRain, CloudLightning, Plane, Bird, Bot, Briefcase, Users, Cloud } from 'lucide-react';
 import { useWorldStore } from '@/stores/world.store';
 import type { Weather, AvatarMode } from '@/stores/world.store';
 
@@ -15,7 +14,7 @@ const weatherOptions: { value: Weather; label: string; icon: React.ReactNode }[]
 const modeOptions: { value: AvatarMode; label: string; icon: React.ReactNode }[] = [
   { value: 'work', label: 'Work', icon: <Briefcase size={13} /> },
   { value: 'travel', label: 'Travel', icon: <Plane size={13} /> },
-  { value: 'creator', label: 'Creator', icon: <Camera size={13} /> },
+  { value: 'creator', label: 'Committee', icon: <Users size={13} /> },
 ];
 
 const companionOptions = [
@@ -25,416 +24,343 @@ const companionOptions = [
 ];
 
 interface Props {
-  inlineMode?: boolean;
+  onClose?: () => void;
 }
 
-export default function MyLittleWorldConfig({ inlineMode = false }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function MyLittleWorldConfig({ onClose }: Props) {
   const {
     cloudDensity, cloudSize, weather, companions, avatarMode,
     setCloudDensity, setCloudSize, setWeather, setAvatarMode,
     toggleCompanion, surpriseMe, reset,
   } = useWorldStore();
 
-  const configContent = (
-    <div className="cfg-body">
-      {/* Cloud Density */}
-      <div className="cfg-group">
-        <label className="cfg-label" htmlFor={inlineMode ? 'cloud-density-inline' : 'cloud-density'}>Cloud Density</label>
-        <input
-          id={inlineMode ? 'cloud-density-inline' : 'cloud-density'}
-          type="range"
-          min="0" max="100"
-          value={cloudDensity * 100}
-          onChange={(e) => setCloudDensity(Number(e.target.value) / 100)}
-          className="cfg-slider"
-        />
-      </div>
-
-      {/* Cloud Size */}
-      <div className="cfg-group">
-        <label className="cfg-label" htmlFor={inlineMode ? 'cloud-size-inline' : 'cloud-size'}>Cloud Size</label>
-        <input
-          id={inlineMode ? 'cloud-size-inline' : 'cloud-size'}
-          type="range"
-          min="50" max="200"
-          value={cloudSize * 100}
-          onChange={(e) => setCloudSize(Number(e.target.value) / 100)}
-          className="cfg-slider"
-        />
-      </div>
-
-      {/* Weather */}
-      <div className="cfg-group">
-        <span className="cfg-label">Weather</span>
-        <div className="cfg-chips">
-          {weatherOptions.map((opt) => (
-            <button
-              key={opt.value}
-              className={`cfg-chip ${weather === opt.value ? 'cfg-chip--active' : ''}`}
-              onClick={() => setWeather(opt.value)}
-              aria-pressed={weather === opt.value}
-            >
-              {opt.icon}
-              <span>{opt.label}</span>
-            </button>
-          ))}
+  return (
+    <div className="cloud-cfg-card glass-card">
+      {/* Header */}
+      <div className="cfg-header-row">
+        <div className="cfg-title-wrapper">
+          <Cloud size={18} className="text-indigo-400" />
+          <h3 className="cfg-title font-mono">Cloud Configurator</h3>
         </div>
-      </div>
-
-      {/* Companions */}
-      <div className="cfg-group">
-        <span className="cfg-label">Companions</span>
-        <div className="cfg-checks">
-          {companionOptions.map((opt) => (
-            <label key={opt.key} className="cfg-check">
-              <input
-                type="checkbox"
-                checked={companions[opt.key]}
-                onChange={() => toggleCompanion(opt.key)}
-              />
-              <span className="cfg-check__box" />
-              {opt.icon}
-              <span>{opt.label}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Mode */}
-      <div className="cfg-group">
-        <span className="cfg-label">Mode</span>
-        <div className="cfg-chips">
-          {modeOptions.map((opt) => (
-            <button
-              key={opt.value}
-              className={`cfg-chip ${avatarMode === opt.value ? 'cfg-chip--active' : ''}`}
-              onClick={() => setAvatarMode(opt.value)}
-              aria-pressed={avatarMode === opt.value}
-            >
-              {opt.icon}
-              <span>{opt.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Actions */}
-      <div className="cfg-actions">
-        <button className="cfg-action" onClick={surpriseMe} id="cfg-randomize">
-          <Shuffle size={13} /> Randomize
-        </button>
-        <button className="cfg-action" onClick={reset} id="cfg-reset">
-          <RotateCcw size={13} /> Reset
+        <button className="cfg-close-square-btn" onClick={onClose} aria-label="Close Configurator">
+          <X size={18} />
         </button>
       </div>
-    </div>
-  );
 
-  // INLINE MODE: Always visible panel (used inside HeroSection on desktop)
-  if (inlineMode) {
-    return (
-      <div className="cfg-panel cfg-panel--inline glass-card" role="region" aria-label="Cloud Configurator">
-        <div className="cfg-header">
-          <div className="cfg-header__left">
-            <Cloud size={15} />
-            <h3 className="cfg-header__title">Cloud Configurator</h3>
+      <div className="cfg-body-content">
+        {/* Row 1: Cloud Size Slider */}
+        <div className="cfg-slider-block">
+          <label className="cfg-label-mono">CLOUD SIZE</label>
+          <input
+            type="range"
+            min="60"
+            max="150"
+            value={cloudSize * 100}
+            onChange={(e) => setCloudSize(Number(e.target.value) / 100)}
+            className="cfg-slider-retro"
+          />
+        </div>
+
+        {/* Row 2: Cloud Density Slider */}
+        <div className="cfg-slider-block">
+          <label className="cfg-label-mono">CLOUD DENSITY & GLOW</label>
+          <input
+            type="range"
+            min="10"
+            max="100"
+            value={cloudDensity * 100}
+            onChange={(e) => setCloudDensity(Number(e.target.value) / 100)}
+            className="cfg-slider-retro"
+          />
+        </div>
+
+        {/* Row 3: Weather Chips */}
+        <div className="cfg-section">
+          <span className="cfg-label-mono">WEATHER</span>
+          <div className="cfg-chips-row">
+            {weatherOptions.map((opt) => (
+              <button
+                key={opt.value}
+                className={`cfg-chip-btn ${weather === opt.value ? 'is-active' : ''}`}
+                onClick={() => setWeather(opt.value)}
+              >
+                {opt.icon}
+                <span>{opt.label}</span>
+              </button>
+            ))}
           </div>
-          <button className="cfg-close" aria-label="Close" onClick={() => {}}>
-            <X size={16} />
+        </div>
+
+        {/* Row 4: Companions Checkboxes */}
+        <div className="cfg-section">
+          <span className="cfg-label-mono">COMPANIONS</span>
+          <div className="cfg-checkbox-group">
+            {companionOptions.map((opt) => (
+              <label key={opt.key} className="cfg-checkbox-item">
+                <input
+                  type="checkbox"
+                  checked={companions[opt.key]}
+                  onChange={() => toggleCompanion(opt.key)}
+                />
+                <span className="checkbox-custom-box" />
+                {opt.icon}
+                <span>{opt.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Row 5: Mode Chips */}
+        <div className="cfg-section">
+          <span className="cfg-label-mono">AVATAR MODE</span>
+          <div className="cfg-chips-row">
+            {modeOptions.map((opt) => (
+              <button
+                key={opt.value}
+                className={`cfg-chip-btn ${avatarMode === opt.value ? 'is-active' : ''}`}
+                onClick={() => setAvatarMode(opt.value)}
+              >
+                {opt.icon}
+                <span>{opt.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom Actions Row */}
+        <div className="cfg-bottom-actions">
+          <button className="cfg-btn-pill btn-silver" onClick={surpriseMe}>
+            RANDOM
+          </button>
+          <button className="cfg-btn-pill btn-red" onClick={reset}>
+            RESET
           </button>
         </div>
-        {configContent}
-
-        <style jsx>{`${sharedStyles}`}</style>
       </div>
-    );
-  }
 
-  // FLOATING MODE: Mobile bottom-sheet / overlay
-  return (
-    <>
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            <motion.div
-              className="cfg-backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
-            />
-            <motion.div
-              className="cfg-panel cfg-panel--floating glass-card"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Cloud Configurator"
-              initial={{ opacity: 0, y: 60 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 60 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            >
-              <div className="cfg-header">
-                <div className="cfg-header__left">
-                  <Cloud size={15} />
-                  <h3 className="cfg-header__title">Cloud Configurator</h3>
-                </div>
-                <button className="cfg-close" onClick={() => setIsOpen(false)} aria-label="Close">
-                  <X size={16} />
-                </button>
-              </div>
-              {configContent}
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-      <style jsx>{`${sharedStyles}
-        .cfg-backdrop {
-          position: fixed;
-          inset: 0;
-          z-index: 950;
-          background: rgba(0, 0, 0, 0.4);
+      <style jsx>{`
+        .cloud-cfg-card {
+          width: 350px;
+          max-width: 90vw;
+          background: var(--bg-card-solid);
+          border: 2px solid var(--accent-tech);
+          border-radius: 18px;
+          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(105, 88, 255, 0.2);
+          overflow: hidden;
+          padding: 18px 20px;
         }
 
-        .cfg-panel--floating {
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          z-index: 960;
-          max-height: 85vh;
-          overflow-y: auto;
-          border-radius: 20px 20px 0 0;
+        .cfg-header-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-bottom: 12px;
+          border-bottom: 1px solid var(--border-subtle);
         }
 
-        @media (min-width: 768px) {
-          .cfg-panel--floating {
-            top: 50%;
-            right: 24px;
-            left: auto;
-            bottom: auto;
-            transform: translateY(-50%);
-            width: 320px;
-            border-radius: 20px;
-          }
+        .cfg-title-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .cfg-title {
+          font-family: var(--font-mono);
+          font-size: 0.95rem;
+          font-weight: 700;
+          color: var(--text-primary);
+        }
+
+        .cfg-close-square-btn {
+          width: 32px;
+          height: 32px;
+          border: 2px solid #6958FF;
+          border-radius: 8px;
+          background: transparent;
+          color: #6958FF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .cfg-close-square-btn:hover {
+          background: #6958FF;
+          color: white;
+        }
+
+        .cfg-body-content {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          margin-top: 14px;
+        }
+
+        .cfg-slider-block {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .cfg-label-mono {
+          font-family: var(--font-mono);
+          font-size: 0.7rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          color: var(--text-secondary);
+          text-transform: uppercase;
+        }
+
+        .cfg-slider-retro {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 100%;
+          height: 8px;
+          border-radius: 4px;
+          background: rgba(105, 88, 255, 0.2);
+          outline: none;
+          cursor: pointer;
+        }
+
+        .cfg-slider-retro::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background: #6958FF;
+          border: 2px solid white;
+          cursor: pointer;
+          box-shadow: 0 2px 10px rgba(105, 88, 255, 0.5);
+        }
+
+        .cfg-section {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .cfg-chips-row {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+
+        .cfg-chip-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 7px 12px;
+          border-radius: 8px;
+          background: var(--glass-bg);
+          border: 1px solid var(--border-subtle);
+          color: var(--text-secondary);
+          font-size: 0.75rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .cfg-chip-btn:hover {
+          border-color: #6958FF;
+          color: var(--text-primary);
+        }
+
+        .cfg-chip-btn.is-active {
+          background: rgba(105, 88, 255, 0.2);
+          border-color: #6958FF;
+          color: var(--text-primary);
+          font-weight: 600;
+        }
+
+        .cfg-checkbox-group {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .cfg-checkbox-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 0.78rem;
+          color: var(--text-secondary);
+          cursor: pointer;
+        }
+
+        .cfg-checkbox-item input {
+          position: absolute;
+          opacity: 0;
+        }
+
+        .checkbox-custom-box {
+          width: 16px;
+          height: 16px;
+          border-radius: 4px;
+          border: 2px solid rgba(105, 88, 255, 0.3);
+          background: var(--glass-bg);
+          position: relative;
+          transition: all 0.2s;
+        }
+
+        .cfg-checkbox-item input:checked + .checkbox-custom-box {
+          background: #6958FF;
+          border-color: #6958FF;
+        }
+
+        .cfg-checkbox-item input:checked + .checkbox-custom-box::after {
+          content: '✓';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          font-size: 0.65rem;
+          color: white;
+          font-weight: 700;
+        }
+
+        .cfg-bottom-actions {
+          display: flex;
+          gap: 12px;
+          margin-top: 6px;
+        }
+
+        .cfg-btn-pill {
+          flex: 1;
+          padding: 10px 14px;
+          border-radius: 8px;
+          font-family: var(--font-mono);
+          font-size: 0.75rem;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          cursor: pointer;
+          border: none;
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-silver {
+          background: linear-gradient(180deg, #E2E8F0 0%, #CBD5E1 100%);
+          color: #0F172A;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-silver:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-red {
+          background: linear-gradient(180deg, #F43F5E 0%, #E11D48 100%);
+          color: white;
+          box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
+        }
+
+        .btn-red:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 16px rgba(244, 63, 94, 0.45);
         }
       `}</style>
-    </>
+    </div>
   );
 }
-
-const sharedStyles = `
-  .cfg-panel {
-    padding: 0;
-    overflow: hidden;
-  }
-
-  .cfg-panel--inline {
-    border-radius: 16px;
-    box-shadow: 0 16px 64px rgba(0, 0, 0, 0.3), 0 0 30px rgba(105, 88, 255, 0.08);
-  }
-
-  .cfg-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 18px 12px;
-    border-bottom: 1px solid rgba(105, 88, 255, 0.15);
-  }
-
-  .cfg-header__left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--accent-tech);
-  }
-
-  .cfg-header__title {
-    font-family: var(--font-display);
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-
-  .cfg-close {
-    width: 28px;
-    height: 28px;
-    border: none;
-    background: transparent;
-    color: var(--text-secondary);
-    cursor: pointer;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-  }
-
-  .cfg-close:hover {
-    background: rgba(105, 88, 255, 0.1);
-    color: var(--text-primary);
-  }
-
-  .cfg-body {
-    padding: 14px 18px 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .cfg-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .cfg-label {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .cfg-slider {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 5px;
-    border-radius: 3px;
-    background: rgba(105, 88, 255, 0.15);
-    outline: none;
-    cursor: pointer;
-  }
-
-  .cfg-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #6958FF;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(105, 88, 255, 0.4);
-  }
-
-  .cfg-chips {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-
-  .cfg-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 7px 12px;
-    border-radius: 8px;
-    background: rgba(13, 27, 62, 0.5);
-    border: 1px solid rgba(105, 88, 255, 0.15);
-    color: var(--text-secondary);
-    font-size: 0.72rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-    font-family: var(--font-body);
-  }
-
-  .cfg-chip:hover {
-    border-color: rgba(105, 88, 255, 0.4);
-    color: var(--text-primary);
-  }
-
-  .cfg-chip--active {
-    background: rgba(105, 88, 255, 0.15);
-    border-color: #6958FF;
-    color: var(--text-primary);
-  }
-
-  .cfg-checks {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .cfg-check {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-
-  .cfg-check:hover {
-    background: rgba(105, 88, 255, 0.05);
-  }
-
-  .cfg-check input {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  .cfg-check__box {
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
-    border: 2px solid rgba(105, 88, 255, 0.3);
-    background: rgba(13, 27, 62, 0.5);
-    position: relative;
-    transition: all 0.15s;
-    flex-shrink: 0;
-  }
-
-  .cfg-check input:checked + .cfg-check__box {
-    background: #6958FF;
-    border-color: #6958FF;
-  }
-
-  .cfg-check input:checked + .cfg-check__box::after {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 0.6rem;
-    color: white;
-    font-weight: 700;
-  }
-
-  .cfg-actions {
-    display: flex;
-    gap: 8px;
-    padding-top: 4px;
-  }
-
-  .cfg-action {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    padding: 9px 14px;
-    border-radius: 8px;
-    font-size: 0.73rem;
-    font-weight: 600;
-    font-family: var(--font-body);
-    cursor: pointer;
-    transition: all 0.2s;
-    border: 1px solid rgba(105, 88, 255, 0.15);
-    background: rgba(13, 27, 62, 0.5);
-    color: var(--text-secondary);
-  }
-
-  .cfg-action:hover {
-    border-color: #6958FF;
-    color: var(--text-primary);
-    background: rgba(105, 88, 255, 0.1);
-    transform: translateY(-1px);
-  }
-`;

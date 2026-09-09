@@ -2,10 +2,128 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Coffee } from 'lucide-react';
+import { Menu, X, Coffee, Sun, Moon, Search, Volume2, Rss, ShieldCheck, LogOut } from 'lucide-react';
 import { navLinks } from '@/lib/fixtures';
+
+export function TopNavToolbar() {
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [muted, setMuted] = useState(false);
+  const { data: session } = useSession();
+  const isAdminSession = Boolean(session?.user?.isAdmin);
+
+  useEffect(() => {
+    const savedTheme = (localStorage.getItem('site-theme') as 'dark' | 'light') || 'dark';
+    setTheme(savedTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    localStorage.setItem('site-theme', nextTheme);
+    document.documentElement.setAttribute('data-theme', nextTheme);
+  };
+
+  return (
+    <div className="nav-toolbar-row">
+      <Link href="/blog" className="nav-icon-btn" aria-label="Search">
+        <Search size={16} />
+      </Link>
+
+      <button
+        onClick={() => setMuted(!muted)}
+        className="nav-icon-btn"
+        aria-label="Toggle Sound"
+        title="Toggle Ambient Sound"
+      >
+        <Volume2 size={16} className={muted ? 'opacity-40' : 'opacity-100'} />
+      </button>
+
+      {/* Day / Night View Theme Toggle Button */}
+      <button
+        onClick={toggleTheme}
+        className={`nav-icon-btn nav-icon-btn--theme ${theme === 'dark' ? 'is-dark' : 'is-light'}`}
+        aria-label={`Switch to ${theme === 'dark' ? 'Day (Light)' : 'Night (Dark)'} View`}
+        title={`Switch to ${theme === 'dark' ? 'Day (Light)' : 'Night (Dark)'} View`}
+      >
+        {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+      </button>
+
+      <a href="/rss.xml" className="nav-icon-btn" aria-label="RSS Feed" title="RSS Feed">
+        <Rss size={16} />
+      </a>
+
+      {isAdminSession ? (
+        <button
+          onClick={() => signOut({ callbackUrl: '/' })}
+          className="nav-icon-btn nav-icon-btn--admin"
+          aria-label="Sign out admin"
+          title="Sign out"
+        >
+          <LogOut size={16} />
+        </button>
+      ) : (
+        <button
+          onClick={() => signIn(undefined, { callbackUrl: '/admin/dashboard' })}
+          className="nav-icon-btn nav-icon-btn--admin"
+          aria-label="Admin login"
+          title="Admin Login"
+        >
+          <ShieldCheck size={16} />
+        </button>
+      )}
+
+      <style jsx>{`
+        .nav-toolbar-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .nav-icon-btn {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: var(--glass-bg);
+          backdrop-filter: blur(12px);
+          border: 1px solid var(--glass-border);
+          color: var(--text-secondary);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .nav-icon-btn:hover {
+          color: var(--text-primary);
+          background: rgba(105, 88, 255, 0.2);
+          border-color: #6958FF;
+          transform: translateY(-1px);
+        }
+
+        .nav-icon-btn--theme.is-dark {
+          color: #FBBF24;
+          border-color: rgba(251, 191, 36, 0.4);
+        }
+
+        .nav-icon-btn--theme.is-light {
+          color: #6958FF;
+          border-color: rgba(105, 88, 255, 0.4);
+        }
+
+        .nav-icon-btn--admin {
+          border-color: rgba(16, 185, 129, 0.36);
+          color: #34d399;
+        }
+      `}</style>
+    </div>
+  );
+}
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -30,10 +148,22 @@ export default function Navbar() {
       className={`navbar ${isScrolled ? 'navbar--scrolled' : ''}`}
     >
       <nav className="navbar__inner container-site" aria-label="Main navigation">
-        {/* Brand */}
-        <Link href="/" className="navbar__brand" aria-label="RahulTripathi.dev Home">
-          <span className="navbar__logo" aria-hidden="true">&lt;/&gt;</span>
-          <span className="navbar__title">RahulTripathi<span className="navbar__title-dot">.dev</span></span>
+        {/* Brand Logo */}
+        <Link href="/" className="navbar__brand" aria-label="Rahul Tripathi — Balance by Design">
+          <div className="navbar__logo-wrapper">
+            <Image
+              src="/sun-symbol.png"
+              alt="Rahul Tripathi Golden Sun Emblem"
+              width={48}
+              height={48}
+              className="navbar__sun-emblem"
+              priority
+            />
+          </div>
+          <div className="navbar__brand-text">
+            <span className="navbar__title">Rahul Tripathi</span>
+            <span className="navbar__tagline">Balance by design</span>
+          </div>
         </Link>
 
         {/* Desktop Nav Links */}
@@ -57,8 +187,9 @@ export default function Navbar() {
           ))}
         </ul>
 
-        {/* CTA & Mobile Toggle */}
+        {/* Top Control Toolbar & CTA */}
         <div className="navbar__actions">
+          <TopNavToolbar />
           <Link href="/contact" className="navbar__cta" id="nav-coffee-cta">
             <Coffee size={16} />
             <span>Let&apos;s Grab a Coffee</span>
@@ -124,7 +255,7 @@ export default function Navbar() {
         }
 
         .navbar--scrolled {
-          background: rgba(8, 18, 41, 0.85);
+          background: var(--glass-bg);
           backdrop-filter: blur(20px);
           -webkit-backdrop-filter: blur(20px);
           border-bottom: 1px solid var(--border-subtle);
@@ -140,37 +271,56 @@ export default function Navbar() {
 
         .navbar__brand {
           display: flex;
-          align-items: center;
-          gap: 10px;
-          font-family: var(--font-display);
-          font-weight: 700;
-          font-size: 1.15rem;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 4px;
           color: var(--text-primary);
           text-decoration: none;
           flex-shrink: 0;
           transition: opacity var(--duration-fast);
         }
 
-        .navbar__brand:hover {
-          opacity: 0.85;
-        }
-
-        .navbar__logo {
+        .navbar__logo-wrapper {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 36px;
-          height: 36px;
-          border-radius: 10px;
-          background: linear-gradient(135deg, var(--accent-tech), #8B7AFF);
-          color: white;
-          font-size: 0.75rem;
-          font-weight: 700;
-          font-family: var(--font-mono);
+          margin-bottom: 2px;
         }
 
-        .navbar__title-dot {
-          color: var(--accent-tech);
+        .navbar__sun-emblem {
+          width: 46px;
+          height: 46px;
+          object-fit: contain;
+          filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.5));
+          transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .navbar__brand:hover .navbar__sun-emblem {
+          transform: scale(1.08) rotate(6deg);
+          filter: drop-shadow(0 0 16px rgba(245, 158, 11, 0.8));
+        }
+
+        .navbar__brand-text {
+          display: flex;
+          flex-direction: column;
+          line-height: 1.15;
+        }
+
+        .navbar__title {
+          font-family: var(--font-display);
+          font-weight: 700;
+          font-size: 1.1rem;
+          color: var(--text-primary);
+          letter-spacing: -0.01em;
+        }
+
+        .navbar__tagline {
+          font-family: var(--font-body);
+          font-size: 0.68rem;
+          font-weight: 500;
+          color: var(--accent-signature);
+          letter-spacing: 0.03em;
+          opacity: 0.9;
         }
 
         .navbar__links {
@@ -274,7 +424,7 @@ export default function Navbar() {
           left: 0;
           right: 0;
           padding: 24px;
-          background: rgba(8, 18, 41, 0.97);
+          background: var(--bg-card-solid);
           backdrop-filter: blur(24px);
           border-bottom: 1px solid var(--border-subtle);
         }

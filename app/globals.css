@@ -6,11 +6,15 @@
    Deep Space Navy / Electric Purple / Sunset Orange
    ============================================================ */
 
-:root {
-  /* Foundation & Surfaces */
+:root,
+:root[data-theme="dark"] {
+  --container-max: 1280px;
+
+  /* Foundation & Surfaces — Dark Mode (Night View) */
+  --bg-hero: linear-gradient(180deg, #081229 0%, #0c1838 50%, #111e47 100%);
   --bg-base: #081229;
   --bg-elevated: #0D1B3E;
-  --bg-card: rgba(13, 27, 62, 0.7);
+  --bg-card: rgba(13, 27, 62, 0.75);
   --bg-card-solid: #0D1B3E;
   --border-subtle: rgba(105, 88, 255, 0.2);
   --border-glow: rgba(105, 88, 255, 0.4);
@@ -27,19 +31,21 @@
   --text-secondary: #A0A8C0;
   --text-muted: #6B7280;
 
-  /* Typography */
-  --font-display: 'Space Grotesk', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-
-  /* Spacing */
-  --section-gap: 6rem;
-  --container-max: 1400px;
-
   /* Glass */
-  --glass-bg: rgba(13, 27, 62, 0.6);
-  --glass-border: rgba(105, 88, 255, 0.15);
+  --glass-bg: rgba(13, 27, 62, 0.7);
+  --glass-border: rgba(105, 88, 255, 0.2);
   --glass-blur: 16px;
+
+  /* Wave Fill */
+  --wave-fill: #0D1B3E;
+
+  /* Footer */
+  --footer-bg: #090F24;
+  --footer-input-bg: #050917;
+  --footer-sky-from: #111a36;
+  --footer-sky-to: #0b1430;
+  --footer-cloud-back: rgba(63, 92, 140, 0.45);
+  --footer-cloud-crest: rgba(191, 214, 255, 0.12);
 
   /* Transitions */
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -47,6 +53,45 @@
   --duration-fast: 150ms;
   --duration-normal: 300ms;
   --duration-slow: 500ms;
+}
+
+:root[data-theme="light"] {
+  /* Foundation & Surfaces — Light Mode (Day View - Sky Blue) */
+  --bg-hero: linear-gradient(180deg, #9BD2EC 0%, #A8DCF5 50%, #C4EDFF 100%);
+  --bg-base: #F8FAFC;
+  --bg-elevated: #FFFFFF;
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-card-solid: #FFFFFF;
+  --border-subtle: rgba(105, 88, 255, 0.2);
+  --border-glow: rgba(105, 88, 255, 0.4);
+
+  /* Accents & Brand Signatures */
+  --accent-tech: #6958FF;
+  --accent-tech-dim: rgba(105, 88, 255, 0.12);
+  --accent-signature: #FF8A3D;
+  --accent-signature-hover: #FF9F5A;
+  --accent-signature-dim: rgba(255, 138, 61, 0.12);
+
+  /* Text */
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-muted: #64748B;
+
+  /* Glass */
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-blur: 16px;
+
+  /* Wave Fill */
+  --wave-fill: #FFFFFF;
+
+  /* Footer */
+  --footer-bg: #82C2E5;
+  --footer-input-bg: #FFFFFF;
+  --footer-sky-from: #b9e5f8;
+  --footer-sky-to: #89c8e8;
+  --footer-cloud-back: rgba(168, 220, 245, 0.78);
+  --footer-cloud-crest: rgba(255, 255, 255, 0.28);
 }
 
 /* ============================================================

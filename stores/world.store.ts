@@ -17,6 +17,8 @@ export type AvatarState =
 export interface WorldState {
   cloudDensity: number;
   cloudSize: number;
+  arcRows: number;
+  arcDensity: number;
   cloudStyle: CloudStyle;
   weather: Weather;
   companions: {
@@ -29,6 +31,8 @@ export interface WorldState {
 
   setCloudDensity: (density: number) => void;
   setCloudSize: (size: number) => void;
+  setArcRows: (rows: number) => void;
+  setArcDensity: (density: number) => void;
   setCloudStyle: (style: CloudStyle) => void;
   setWeather: (weather: Weather) => void;
   setAvatarMode: (mode: AvatarMode) => void;
@@ -41,6 +45,8 @@ export interface WorldState {
 const defaultState = {
   cloudDensity: 0.5,
   cloudSize: 1.0,
+  arcRows: 5,
+  arcDensity: 6,
   cloudStyle: 'classic' as CloudStyle,
   weather: 'clear' as Weather,
   companions: {
@@ -61,6 +67,8 @@ export const useWorldStore = create<WorldState>((set) => ({
 
   setCloudDensity: (density) => set({ cloudDensity: Math.max(0, Math.min(1, density)) }),
   setCloudSize: (size) => set({ cloudSize: Math.max(0.5, Math.min(2, size)) }),
+  setArcRows: (rows) => set({ arcRows: Math.max(1, Math.min(7, rows)) }),
+  setArcDensity: (density) => set({ arcDensity: Math.max(1, Math.min(15, density)) }),
   setCloudStyle: (style) => set({ cloudStyle: style }),
   setWeather: (weather) => set({ weather }),
   setAvatarMode: (mode) => set({ avatarMode: mode }),
@@ -77,7 +85,9 @@ export const useWorldStore = create<WorldState>((set) => ({
   surpriseMe: () =>
     set({
       cloudDensity: Math.random(),
-      cloudSize: 0.5 + Math.random() * 1.5,
+      cloudSize: 0.6 + Math.random() * 0.8,
+      arcRows: Math.floor(2 + Math.random() * 5),
+      arcDensity: Math.floor(3 + Math.random() * 8),
       cloudStyle: styles[Math.floor(Math.random() * styles.length)],
       weather: weathers[Math.floor(Math.random() * weathers.length)],
       companions: {

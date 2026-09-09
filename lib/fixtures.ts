@@ -26,6 +26,28 @@ export interface TravelFixture {
   isPlaceholder: true;
 }
 
+// Rich adventure entry — powers /adventure page & admin CMS
+export interface AdventureEntry {
+  id: string;
+  slug: string;
+  destination: string;
+  country: string;
+  countryCode: string;
+  cities: string[];
+  excerpt: string;
+  visitedAt: string;
+  endedAt?: string;
+  isCurrent: boolean;
+  coverImage: string;
+  profilePhotoAtLocation: string;
+  photos: string[];
+  highlights: string[];
+  travelStyle: 'solo' | 'team' | 'remote-work' | 'leisure';
+  emoji: string;
+  lat: number;
+  lng: number;
+}
+
 export interface VideoFixture {
   youtubeId: string;
   title: string;
@@ -155,6 +177,154 @@ export const travelFixtures: TravelFixture[] = [
     excerpt: 'Mountain retreats, scenic trains, and the best chocolate in the world.',
     visitedAt: '2025-12-20',
     isPlaceholder: true,
+  },
+];
+
+// ============================================================
+// Adventure Fixtures (Rich — used by /adventure page)
+// ============================================================
+
+export const adventureFixtures: AdventureEntry[] = [
+  {
+    id: 'adv-001',
+    slug: 'thailand-bangkok-chiangmai',
+    destination: 'Thailand',
+    country: 'Thailand',
+    countryCode: 'TH',
+    cities: ['Bangkok', 'Chiang Mai'],
+    excerpt: 'Remote-working from temples and rooftop cafés — where street food costs less than your coffee back home and the sunsets are absolutely unreal.',
+    visitedAt: '2026-05-01',
+    isCurrent: true,
+    coverImage: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1200&h=800&fit=crop&q=80',
+    profilePhotoAtLocation: '/avatar-3d-head-only.png',
+    photos: [
+      'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80',
+      'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80',
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
+    ],
+    highlights: [
+      'Digital nomad base in Chiang Mai old city',
+      'Doi Inthanon — highest peak in Thailand',
+      'Street food tour through Bangkok night markets',
+      'Remote work from a bamboo café with mountain views',
+    ],
+    travelStyle: 'remote-work',
+    emoji: '🇹🇭',
+    lat: 13.7563,
+    lng: 100.5018,
+  },
+  {
+    id: 'adv-002',
+    slug: 'singapore-city',
+    destination: 'Singapore',
+    country: 'Singapore',
+    countryCode: 'SG',
+    cities: ['Singapore'],
+    excerpt: 'The city where hawker stalls coexist with Michelin stars — a layover that turned into a full engineering conference detour.',
+    visitedAt: '2026-04-10',
+    endedAt: '2026-04-18',
+    isCurrent: false,
+    coverImage: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=1200&h=800&fit=crop&q=80',
+    profilePhotoAtLocation: '/avatar-3d-head-only.png',
+    photos: [
+      'https://images.unsplash.com/photo-1508964942454-1a56651d54ac?w=800&q=80',
+      'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800&q=80',
+    ],
+    highlights: [
+      'Marina Bay Sands rooftop — best skyline view in Asia',
+      'Tech meetup at Singapore Science Park',
+      'Gardens by the Bay light show',
+      'Hawker centre hopping at Maxwell Food Centre',
+    ],
+    travelStyle: 'remote-work',
+    emoji: '🇸🇬',
+    lat: 1.3521,
+    lng: 103.8198,
+  },
+  {
+    id: 'adv-003',
+    slug: 'paris-france',
+    destination: 'Paris',
+    country: 'France',
+    countryCode: 'FR',
+    cities: ['Paris'],
+    excerpt: 'Croissants, code, and the Eiffel Tower — Paris proved that the best architecture isn\'t always in the cloud.',
+    visitedAt: '2026-02-14',
+    endedAt: '2026-02-22',
+    isCurrent: false,
+    coverImage: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1200&h=800&fit=crop&q=80',
+    profilePhotoAtLocation: '/avatar-3d-head-only.png',
+    photos: [
+      'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&q=80',
+      'https://images.unsplash.com/photo-1431274172761-fcdab704a5bd?w=800&q=80',
+    ],
+    highlights: [
+      'Sunrise at Eiffel Tower — absolutely worth the early alarm',
+      'Worked from Shakespeare & Company bookshop café',
+      'Day trip to Versailles palace gardens',
+      'French pastry tasting — 12 croissants, no regrets',
+    ],
+    travelStyle: 'leisure',
+    emoji: '🇫🇷',
+    lat: 48.8566,
+    lng: 2.3522,
+  },
+  {
+    id: 'adv-004',
+    slug: 'tokyo-japan',
+    destination: 'Tokyo',
+    country: 'Japan',
+    countryCode: 'JP',
+    cities: ['Tokyo', 'Osaka', 'Kyoto'],
+    excerpt: 'Bullet trains, cherry blossoms, and the intersection of ancient tradition with bleeding-edge technology.',
+    visitedAt: '2026-04-01',
+    endedAt: '2026-04-09',
+    isCurrent: false,
+    coverImage: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1200&h=800&fit=crop&q=80',
+    profilePhotoAtLocation: '/avatar-3d-head-only.png',
+    photos: [
+      'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&q=80',
+      'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=80',
+      'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80',
+    ],
+    highlights: [
+      'Cherry blossom hanami in Shinjuku Gyoen',
+      'TeamLab Borderless digital art museum',
+      'Shinkansen ride Osaka → Kyoto → Tokyo',
+      'Late-night ramen in Shibuya after a dev meetup',
+    ],
+    travelStyle: 'remote-work',
+    emoji: '🇯🇵',
+    lat: 35.6762,
+    lng: 139.6503,
+  },
+  {
+    id: 'adv-005',
+    slug: 'iceland-ring-road',
+    destination: 'Iceland Ring Road',
+    country: 'Iceland',
+    countryCode: 'IS',
+    cities: ['Reykjavik', 'Akureyri', 'Vik'],
+    excerpt: 'Driving 1332km around the entire island — glaciers, volcanoes, waterfalls, and the Northern Lights. No WiFi needed.',
+    visitedAt: '2026-03-01',
+    endedAt: '2026-03-14',
+    isCurrent: false,
+    coverImage: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=1200&h=800&fit=crop&q=80',
+    profilePhotoAtLocation: '/avatar-3d-head-only.png',
+    photos: [
+      'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=80',
+      'https://images.unsplash.com/photo-1504233529578-6d46baba6d34?w=800&q=80',
+    ],
+    highlights: [
+      'Northern Lights at Jokulsarlon glacier lagoon',
+      'Completed the full Ring Road in 10 days',
+      'Skaftafell glacier hike',
+      'Geothermal hot springs in the highlands',
+    ],
+    travelStyle: 'solo',
+    emoji: '🇮🇸',
+    lat: 64.9631,
+    lng: -19.0208,
   },
 ];
 
