@@ -1,3 +1,11 @@
+# RahulSite
+
+Start with the [canonical design folder](design/README.md): the multiagent master
+prompt, consolidated LLD, acceptance criteria and architecture images live there.
+Use the [infrastructure inventory](infra.md) for resource details. The design
+baseline targets Azure App Service; the Vercel section below is retained scaffold
+documentation, not the project's deployment decision.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

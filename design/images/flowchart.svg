@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1460" viewBox="0 0 1600 1460" role="img" aria-labelledby="title desc">
+  <title id="title">RahulSite | Visitor and admin decision flows — TARGET</title>
+  <desc id="desc">Target visitor flow reads only published Cosmos content and returns truthful pages, empty lists, 404s or unavailable states. Target admin CRUD requires authorization and runtime validation before save or publish. AI and newsletter features are optional, gated and not implemented. Existing public pages use fixtures.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#167da5"/></marker>
+    <marker id="error" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#b36429"/></marker>
+    <g id="web"><circle cx="22" cy="22" r="20" fill="#e2f2ff" stroke="#0078d4" stroke-width="2"/><ellipse cx="22" cy="22" rx="8" ry="20" fill="none" stroke="#0078d4" stroke-width="2"/><path d="M2 22H42M6 11H38M6 33H38" stroke="#0078d4" stroke-width="2"/></g>
+    <g id="edit"><rect x="2" y="2" width="35" height="40" rx="4" fill="#dff5ef" stroke="#008577" stroke-width="2"/><path d="M11 31L15 21L33 3L40 10L22 28Z" fill="#008577"/><path d="M9 36H29" stroke="#008577" stroke-width="2"/></g>
+    <style>
+      text{font-family:Segoe UI,Arial,sans-serif;font-size:15px;fill:#20374e}.title{font-size:30px;font-weight:700;fill:#12334f}.section{font-size:21px;font-weight:700}.label{font-size:16px;font-weight:600}.small{font-size:13px;fill:#536c80}.tag{font-size:12px;font-weight:700;letter-spacing:1px}.node{fill:#fff;stroke:#bfd5e4;stroke-width:1.5}.decision{fill:#eaf3ff;stroke:#0078d4;stroke-width:1.5}.good{fill:#e5f5f1;stroke:#7cbeb1;stroke-width:1.5}.bad{fill:#fff5eb;stroke:#d8b18c;stroke-width:1.5}.edge{fill:none;stroke:#167da5;stroke-width:2;marker-end:url(#arrow)}.error{fill:none;stroke:#b36429;stroke-width:2;stroke-dasharray:6 4;marker-end:url(#error)}
+    </style>
+  </defs>
+  <rect width="1600" height="1460" fill="#fff"/><rect width="1600" height="8" fill="#0078d4"/>
+  <text x="40" y="55" class="title">RahulSite | Content journeys &amp; decision points</text>
+  <rect x="1210" y="29" width="350" height="32" rx="16" fill="#fff0d2"/><text x="1385" y="50" text-anchor="middle" class="tag">TARGET — NOT CURRENT END-TO-END</text>
+  <text x="40" y="87" class="small">EXISTING: Next.js 16 on RahulSite; Entra SSO + proxy admin protection. Public pages use fixtures; CRUD lacks route-level runtime validation.</text>
+  <rect x="40" y="116" width="740" height="1110" rx="16" fill="#f6faff" stroke="#d3e3ee"/>
+  <rect x="810" y="116" width="750" height="1110" rx="16" fill="#f4fbf9" stroke="#cbe4de"/>
+  <use href="#web" x="65" y="136"/><text x="124" y="166" class="section">01  Visitor • published content only</text>
+  <use href="#edit" x="835" y="136"/><text x="895" y="166" class="section">02  Admin • trusted writes after checks</text>
+  <rect x="230" y="208" width="330" height="62" rx="30" class="node"/><text x="395" y="245" text-anchor="middle" class="label">Request list or detail page</text>
+  <path d="M395 270V315" class="edge"/><text x="410" y="298" class="small">Server-side read</text>
+  <rect x="180" y="315" width="430" height="90" rx="12" class="node"/><text x="395" y="347" text-anchor="middle" class="label">Query rahulsitecosmos</text><text x="395" y="374" text-anchor="middle">Filter published state; never expose drafts</text>
+  <path d="M395 405V445" class="edge"/>
+  <path d="M395 445L540 510L395 575L250 510Z" class="decision"/><text x="395" y="516" text-anchor="middle" class="label">Read succeeded?</text>
+  <path d="M540 510H585" class="error"/><text x="546" y="497" class="small">No</text>
+  <rect x="585" y="467" width="170" height="86" rx="12" class="bad"/><text x="670" y="501" text-anchor="middle" class="label">Unavailable</text><text x="670" y="527" text-anchor="middle" class="small">503 / retry guidance</text>
+  <path d="M395 575V620" class="edge"/><text x="410" y="601" class="small">Yes</text>
+  <path d="M395 620L540 685L395 750L250 685Z" class="decision"/><text x="395" y="680" text-anchor="middle" class="label">Published result</text><text x="395" y="702" text-anchor="middle" class="label">found?</text>
+  <path d="M250 685H155V814" class="edge"/><text x="177" y="672" class="small">Yes</text>
+  <rect x="65" y="814" width="200" height="84" rx="12" class="good"/><text x="165" y="847" text-anchor="middle" class="label">Render real content</text><text x="165" y="874" text-anchor="middle" class="small">Published assets only</text>
+  <path d="M395 750V790" class="edge"/><text x="410" y="777" class="small">No</text>
+  <path d="M450 790L595 855L450 920L305 855Z" class="decision"/><text x="450" y="862" text-anchor="middle" class="label">Detail request?</text>
+  <path d="M450 920V959H315V999" class="edge"/><text x="327" y="946" class="small">Yes</text>
+  <path d="M595 855H665V999" class="edge"/><text x="680" y="942" class="small">No • list</text>
+  <rect x="215" y="999" width="205" height="87" rx="12" class="bad"/><text x="317" y="1032" text-anchor="middle" class="label">404 Not found</text><text x="317" y="1058" text-anchor="middle" class="small">Absent or draft-only slug</text>
+  <rect x="555" y="999" width="200" height="87" rx="12" class="good"/><text x="655" y="1032" text-anchor="middle" class="label">Honest empty list</text><text x="655" y="1058" text-anchor="middle" class="small">200 • nothing published</text>
+  <rect x="65" y="1121" width="690" height="80" rx="10" fill="#eaf3ff"/><text x="85" y="1152" class="label">No invented fallback content</text><text x="85" y="1178">Do not disguise an outage as an empty list or silently serve fixtures.</text>
+  <rect x="880" y="208" width="370" height="62" rx="30" class="node"/><text x="1065" y="245" text-anchor="middle" class="label">Entra SSO → NextAuth session</text>
+  <path d="M1065 270V310" class="edge"/>
+  <path d="M1065 310L1220 375L1065 440L910 375Z" class="decision"/><text x="1065" y="368" text-anchor="middle" class="label">Route session +</text><text x="1065" y="392" text-anchor="middle" class="label">admin authorized?</text>
+  <path d="M1220 375H1300" class="error"/><text x="1240" y="361" class="small">No</text>
+  <rect x="1300" y="335" width="235" height="80" rx="12" class="bad"/><text x="1417" y="367" text-anchor="middle" class="label">401 / 403 • stop</text><text x="1417" y="393" text-anchor="middle" class="small">No data access</text>
+  <path d="M1065 440V480" class="edge"/><text x="1080" y="466" class="small">Yes</text>
+  <rect x="850" y="480" width="430" height="81" rx="12" class="node"/><text x="1065" y="513" text-anchor="middle" class="label">Create / read / update / delete</text><text x="1065" y="539" text-anchor="middle">Select operation; draft or publish intent</text>
+  <path d="M1065 561V601" class="edge"/>
+  <path d="M1065 601L1220 673L1065 745L910 673Z" class="decision"/><text x="1065" y="663" text-anchor="middle" class="label">Runtime schema +</text><text x="1065" y="687" text-anchor="middle" class="label">publish rules valid?</text>
+  <path d="M1220 673H1300" class="error"/><text x="1240" y="659" class="small">No</text>
+  <rect x="1300" y="633" width="235" height="80" rx="12" class="bad"/><text x="1417" y="665" text-anchor="middle" class="label">Validation 4xx</text><text x="1417" y="691" text-anchor="middle" class="small">Explain fields; no write</text>
+  <path d="M1065 745V785" class="edge"/><text x="1080" y="771" class="small">Yes</text>
+  <rect x="850" y="785" width="430" height="105" rx="12" class="node"/><text x="1065" y="815" text-anchor="middle" class="label">Execute validated operation</text><text x="1065" y="842" text-anchor="middle">If media: validate upload → private Blob</text><text x="1065" y="868" text-anchor="middle" class="small">Cosmos: scoped read / save state / delete as requested</text>
+  <path d="M1065 890V926" class="edge"/>
+  <path d="M1065 926L1220 984L1065 1042L910 984Z" class="decision"/><text x="1065" y="990" text-anchor="middle" class="label">Operation succeeded?</text>
+  <path d="M1220 984H1300" class="error"/><text x="1240" y="970" class="small">No</text>
+  <rect x="1300" y="924" width="235" height="123" rx="12" class="bad"/><text x="1417" y="954" text-anchor="middle" class="label">Show honest error</text><text x="1417" y="982" text-anchor="middle" class="small">DB failure after Blob success:</text><text x="1417" y="1004" text-anchor="middle" class="small">reconcile / clean orphan;</text><text x="1417" y="1026" text-anchor="middle" class="small">never confirm publication</text>
+  <path d="M1065 1042V1090" class="edge"/><text x="1080" y="1072" class="small">Yes</text>
+  <rect x="850" y="1090" width="430" height="111" rx="12" class="good"/><text x="1065" y="1121" text-anchor="middle" class="label">Return actual result</text><text x="1065" y="1148" text-anchor="middle">Confirm writes only after DB acknowledgement</text><text x="1065" y="1175" text-anchor="middle" class="small">Draft stays private; published state enters visitor read path</text>
+  <rect x="40" y="1250" width="1520" height="105" rx="14" fill="#f8fafc" stroke="#a8bdcd" stroke-dasharray="8 5"/>
+  <text x="62" y="1282" class="section">03  Optional AI / newsletter — NOT IMPLEMENTED</text>
+  <rect x="62" y="1300" width="305" height="36" rx="18" class="node"/><text x="214" y="1324" text-anchor="middle">Feature flag + explicit approval?</text>
+  <path d="M367 1318H510" class="edge"/><text x="389" y="1307" class="small">No (default)</text><text x="525" y="1324" class="label">Hidden / disabled</text>
+  <path d="M214 1336V1346H865V1318H890" class="error"/><text x="779" y="1307" class="small">Yes (future)</text><text x="905" y="1324">Separate design, consent / privacy review, then implementation</text>
+  <path d="M40 1393H100" class="edge"/><text x="114" y="1398" class="small">Target normal / decision branch</text><path d="M420 1393H480" class="error"/><text x="494" y="1398" class="small">Target rejection / failure / gated future</text>
+  <text x="40" y="1435" class="small">Existing services do not imply these controls are complete. See sequence.svg for upload / save failure handling and security.svg for controlled media delivery.</text>
+</svg>
