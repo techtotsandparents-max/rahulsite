@@ -1,0 +1,8 @@
+# These owners will be the default reviewers for pull requests.
+# Order is important; the last matching pattern takes the most precedence.
+
+# Global default
+*       @techtotsandparents-max
+
+# Infrastructure specific - requires infra team review
+/infra/ @techtotsandparents-max
