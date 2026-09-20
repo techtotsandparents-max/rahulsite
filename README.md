@@ -19,52 +19,34 @@
 </a>
 </div>
 
-<!-- ░░░░░░░░░░░ ASCII PORTRAIT + INFO CARD ░░░░░░░░░░░ -->
-<div align="center">
-
-<table>
-<tr>
-<td valign="top"><img src="./avi-ascii.svg" width="400" alt="ASCII portrait" /></td>
-<td valign="top"><img src="./info-card.svg" width="490" alt="Experience, stack, highlights" /></td>
-</tr>
-</table>
-
-</div>
-
-<!-- ░░░░░░░░░░░ NEOFETCH-STYLE ABOUT SECTION ░░░░░░░░░░░ -->
+<!-- ░░░░░░░░░░░ ASCII PORTRAIT + SYSTEM INFO ░░░░░░░░░░░ -->
 <table align="center" border="0" cellpadding="0" cellspacing="0">
 <tr>
-<td width="300" align="center" valign="top">
+<td valign="top">
 
-<img src="https://github.com/techtotsandparents-max.png" width="220" alt="Rahul Tripathi"/>
-
-<br/>
-
-[![LinkedIn](https://img.shields.io/badge/-Rahul_Tripathi-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://linkedin.com/in/rahul-tripathi-a05a1693)
-[![Gmail](https://img.shields.io/badge/-Email-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:Tripathi.rahultripathi1992@gmail.com)
-[![Portfolio](https://img.shields.io/badge/-RahulSite-00FF99?style=flat-square&logo=google-chrome&logoColor=0D1117)](https://github.com/techtotsandparents-max/rahulsite)
+<img src="./avi-ascii.svg" width="400" alt="ASCII portrait" />
 
 </td>
-<td width="550" valign="top">
+<td valign="top">
 
 ```yaml
+# SYSTEM_INFO
 name:      Rahul Tripathi
 role:      Principal Cloud & Systems Architect
 company:   Amadeus Labs, Bengaluru
 experience: 12+ years
 
-currently:
-  - Designing enterprise landing zones on Azure
-  - Architecting secure AI platforms on Azure AI Foundry
-  - Building multi-agent orchestration (MCP + A2A)
-  - Defining architecture standards as Design Authority
+currently_architecting:
+  - Enterprise landing zones on Azure (Hub-and-Spoke)
+  - Secure AI platforms on Azure AI Foundry
+  - Multi-agent orchestration (MCP + A2A)
+  - Enterprise architecture standards and governance
 
-domains:
+core_domains:
   - Cloud Architecture & Networking
-  - Security, Identity & Zero Trust
-  - Infrastructure Automation (Terraform/Bicep)
-  - AI Platform Architecture
-  - Reliability & Cost Governance
+  - Security, Identity (Entra ID) & Zero Trust
+  - Infrastructure as Code (Terraform, Bicep)
+  - Reliability & Cost Optimization
 ```
 
 </td>
