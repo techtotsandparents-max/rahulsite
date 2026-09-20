@@ -43,7 +43,7 @@ export interface WorldState {
 }
 
 const defaultState = {
-  cloudDensity: 0.5,
+  cloudDensity: 1.0,
   cloudSize: 1.0,
   arcRows: 5,
   arcDensity: 6,
