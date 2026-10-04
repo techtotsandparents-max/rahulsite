@@ -5,6 +5,7 @@ import {
   isSupportedDataType,
   listItems,
 } from '@/lib/db';
+import { getAdminSession } from '@/lib/auth';
 import {
   adventureFixtures,
   blogFixtures,
@@ -56,6 +57,12 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ type: string }> }
 ) {
+  // Defense-in-depth: verify admin session even though middleware guards this route
+  const session = await getAdminSession();
+  if (!session?.user?.isAdmin) {
+    return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
+  }
+
   const { type } = await params;
 
   if (!isSupportedDataType(type)) {

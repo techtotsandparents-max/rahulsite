@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { getAdminSession } from '@/lib/auth';
 
+import { DefaultAzureCredential } from '@azure/identity';
+import { SecretClient } from '@azure/keyvault-secrets';
+
 const ALLOWED_PREFIXES = ['image/', 'video/'];
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'mp4'];
 const MAX_IMAGE_SIZE_MB = 20;
@@ -22,13 +25,31 @@ function getMaxSizeBytes(file: File) {
   return MAX_IMAGE_SIZE_MB * 1024 * 1024;
 }
 
+async function getStorageConnectionString(): Promise<string | undefined> {
+  let connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
+  const keyVaultUri = process.env.AZURE_KEYVAULT_URI;
+
+  if (connectionString) return connectionString;
+  if (!keyVaultUri) return undefined;
+
+  try {
+    const credential = new DefaultAzureCredential();
+    const client = new SecretClient(keyVaultUri, credential);
+    const secret = await client.getSecret('storage-connection-string');
+    return secret.value;
+  } catch (error) {
+    console.error('Failed to fetch Storage connection string from Key Vault:', error);
+    return undefined;
+  }
+}
+
 export async function POST(request: NextRequest) {
   const session = await getAdminSession();
   if (!session?.user?.isAdmin) {
     return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
   }
 
-  const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
+  const connectionString = await getStorageConnectionString();
   const containerName = process.env.AZURE_STORAGE_CONTAINER ?? 'uploads';
   const cdnBase = process.env.AZURE_STORAGE_CDN_URL;
 

@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { deleteItem, isSupportedDataType, updateItem } from '@/lib/db';
+import { getAdminSession } from '@/lib/auth';
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ type: string; id: string }> }
 ) {
+  // Defense-in-depth: verify admin session even though middleware guards this route
+  const session = await getAdminSession();
+  if (!session?.user?.isAdmin) {
+    return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
+  }
+
   const { type, id } = await params;
 
   if (!isSupportedDataType(type)) {
@@ -31,6 +38,12 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ type: string; id: string }> }
 ) {
+  // Defense-in-depth: verify admin session even though middleware guards this route
+  const session = await getAdminSession();
+  if (!session?.user?.isAdmin) {
+    return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
+  }
+
   const { type, id } = await params;
 
   if (!isSupportedDataType(type)) {

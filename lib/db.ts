@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import { DefaultAzureCredential } from '@azure/identity';
+import { SecretClient } from '@azure/keyvault-secrets';
 
 type DataType = 'blogs' | 'adventures' | 'projects' | 'videos' | 'settings';
 
@@ -10,8 +12,9 @@ const collectionMap: Record<DataType, string> = {
   settings: 'settings',
 };
 
-const connectionString = process.env.COSMOS_DB_CONNECTION_STRING;
+let connectionString = process.env.COSMOS_DB_CONNECTION_STRING;
 const dbName = process.env.COSMOS_DB_NAME ?? 'rahultech_prod';
+const keyVaultUri = process.env.AZURE_KEYVAULT_URI;
 
 let connectPromise: Promise<typeof mongoose> | null = null;
 
@@ -20,11 +23,28 @@ function isConnectionReady() {
 }
 
 export function isDatabaseConfigured() {
-  return Boolean(connectionString);
+  return Boolean(connectionString) || Boolean(keyVaultUri);
+}
+
+async function getConnectionString(): Promise<string | undefined> {
+  if (connectionString) return connectionString;
+  if (!keyVaultUri) return undefined;
+
+  try {
+    const credential = new DefaultAzureCredential();
+    const client = new SecretClient(keyVaultUri, credential);
+    const secret = await client.getSecret('cosmos-db-connection-string');
+    connectionString = secret.value;
+    return connectionString;
+  } catch (error) {
+    console.error('Failed to fetch Cosmos DB connection string from Key Vault:', error);
+    return undefined;
+  }
 }
 
 export async function connectDb() {
-  if (!connectionString) {
+  const connStr = await getConnectionString();
+  if (!connStr) {
     return null;
   }
 
@@ -33,7 +53,7 @@ export async function connectDb() {
   }
 
   if (!connectPromise) {
-    connectPromise = mongoose.connect(connectionString, {
+    connectPromise = mongoose.connect(connStr, {
       dbName,
       maxPoolSize: 10,
       minPoolSize: 1,
