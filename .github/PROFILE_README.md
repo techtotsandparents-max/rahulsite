@@ -19,41 +19,40 @@
 </a>
 </div>
 
-<!-- ░░░░░░░░░░░ ASCII PORTRAIT + SYSTEM INFO ░░░░░░░░░░░ -->
+<!-- ░░░░░░░░░░░ NEOFETCH-STYLE ABOUT SECTION ░░░░░░░░░░░ -->
 <table align="center" border="0" cellpadding="0" cellspacing="0">
 <tr>
-<td valign="top">
+<td width="300" align="center" valign="top">
 
-<img src="./avi-ascii.svg" width="400" alt="ASCII portrait" />
+<img src="https://github.com/techtotsandparents-max.png" width="220" alt="Rahul Tripathi"/>
+
+<br/>
+
+[![LinkedIn](https://img.shields.io/badge/-Rahul_Tripathi-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://linkedin.com/in/rahul-tripathi-a05a1693)
+[![Gmail](https://img.shields.io/badge/-Email-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:Tripathi.rahultripathi1992@gmail.com)
+[![Portfolio](https://img.shields.io/badge/-RahulSite-00FF99?style=flat-square&logo=google-chrome&logoColor=0D1117)](https://github.com/techtotsandparents-max/rahulsite)
 
 </td>
-<td valign="top">
+<td width="550" valign="top">
 
 ```yaml
-# SYSTEM_INFO
 name:      Rahul Tripathi
 role:      Principal Cloud & Systems Architect
 company:   Amadeus Labs, Bengaluru
 experience: 12+ years
 
-core_discipline: End-to-End Distributed Systems
-  # HLD → LLD
-high_level:
-  - Reference architectures & domain boundaries
-  - Network topology & failure modes
-low_level:
-  - Component design & interface contracts
-  - Data flows & identity/access models
+currently:
+  - Designing enterprise landing zones on Azure
+  - Architecting secure AI platforms on Azure AI Foundry
+  - Building multi-agent orchestration (MCP + A2A)
+  - Defining architecture standards as Design Authority
 
-architecture_scope:
-  - Web Apps, Azure Functions, ACR Microservices
-  - Cosmos DB, SQL, Azure AI Search
-  - Landing Zones & Zero Trust Perimeters
-
-currently_architecting:
-  - Enterprise landing zones (Hub-and-Spoke)
-  - Secure AI platforms on Azure AI Foundry
-  - Multi-agent orchestration (MCP + A2A)
+domains:
+  - Cloud Architecture & Networking
+  - Security, Identity & Zero Trust
+  - Infrastructure Automation (Terraform/Bicep)
+  - AI Platform Architecture
+  - Reliability & Cost Governance
 ```
 
 </td>
