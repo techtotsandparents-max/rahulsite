@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  createItem,
-  isDatabaseConfigured,
-  isSupportedDataType,
-  listItems,
-} from '@/lib/db';
+import { DataService } from '@/services/DataService';
 import { getAdminSession } from '@/lib/auth';
 import {
   adventureFixtures,
@@ -37,16 +32,16 @@ export async function GET(
 ) {
   const { type } = await params;
 
-  if (!isSupportedDataType(type)) {
+  if (!DataService.isSupportedDataType(type)) {
     return NextResponse.json({ ok: false, error: 'Invalid type' }, { status: 400 });
   }
 
-  if (!isDatabaseConfigured()) {
+  if (!DataService.isDatabaseConfigured()) {
     return NextResponse.json({ ok: true, data: fixtureMap[type], source: 'fixtures', isPlaceholder: true });
   }
 
   try {
-    const data = await listItems(type);
+    const data = await DataService.listItems(type as any);
     return NextResponse.json({ ok: true, data, source: 'cosmos' });
   } catch {
     return NextResponse.json({ ok: true, data: fixtureMap[type], source: 'fixtures', isPlaceholder: true });
@@ -65,11 +60,11 @@ export async function POST(
 
   const { type } = await params;
 
-  if (!isSupportedDataType(type)) {
+  if (!DataService.isSupportedDataType(type)) {
     return NextResponse.json({ ok: false, error: 'Invalid type' }, { status: 400 });
   }
 
-  if (!isDatabaseConfigured()) {
+  if (!DataService.isDatabaseConfigured()) {
     return NextResponse.json(
       { ok: false, error: 'Database not configured. Set Cosmos DB environment variables.' },
       { status: 500 }
@@ -80,7 +75,7 @@ export async function POST(
   const created = normalizePayload(type, body);
 
   try {
-    const data = await createItem(type, created);
+    const data = await DataService.createItem(type as any, created);
     return NextResponse.json({ ok: true, data });
   } catch {
     return NextResponse.json(

@@ -1,0 +1,74 @@
+import { BlobServiceClient } from '@azure/storage-blob';
+import { DefaultAzureCredential } from '@azure/identity';
+import { SecretClient } from '@azure/keyvault-secrets';
+
+/**
+ * This file is purely responsible for talking to Azure.
+ * It does not care about what kind of files are being uploaded,
+ * sizes, validations, or HTTP requests. It just authenticates 
+ * and stores a buffer in Blob Storage.
+ */
+export class AzureStorageClient {
+  private static connectionString: string | undefined;
+
+  private static async getConnectionString(): Promise<string> {
+    // Return cached connection string if we already have it
+    if (this.connectionString) return this.connectionString;
+
+    const connString = process.env.AZURE_STORAGE_CONNECTION_STRING;
+    const keyVaultUri = process.env.AZURE_KEYVAULT_URI;
+
+    if (connString) {
+      this.connectionString = connString;
+      return connString;
+    }
+
+    if (!keyVaultUri) {
+      throw new Error('Neither Storage connection string nor Key Vault URI are configured.');
+    }
+
+    try {
+      const credential = new DefaultAzureCredential();
+      const client = new SecretClient(keyVaultUri, credential);
+      const secret = await client.getSecret('storage-connection-string');
+      
+      if (!secret.value) {
+          throw new Error("Secret exists but has no value");
+      }
+      this.connectionString = secret.value;
+      return this.connectionString;
+    } catch (error) {
+      console.error('Failed to fetch Storage connection string from Key Vault:', error);
+      throw new Error('Failed to fetch Storage connection string from Key Vault');
+    }
+  }
+
+  public static async uploadBlob(
+    fileBuffer: Buffer,
+    blobName: string,
+    mimeType: string
+  ): Promise<{ url: string }> {
+    const connectionString = await this.getConnectionString();
+    const containerName = process.env.AZURE_STORAGE_CONTAINER ?? 'uploads';
+    const cdnBase = process.env.AZURE_STORAGE_CDN_URL;
+
+    const blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    
+    await containerClient.createIfNotExists();
+
+    const blobClient = containerClient.getBlockBlobClient(blobName);
+
+    await blobClient.uploadData(fileBuffer, {
+      blobHTTPHeaders: {
+        blobContentType: mimeType,
+      },
+    });
+
+    const url = cdnBase
+      ? `${cdnBase.replace(/\/$/, '')}/${blobName}`
+      : blobClient.url;
+
+    return { url };
+  }
+}

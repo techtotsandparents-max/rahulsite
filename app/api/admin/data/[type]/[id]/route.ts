@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { deleteItem, isSupportedDataType, updateItem } from '@/lib/db';
+import { DataService } from '@/services/DataService';
 import { getAdminSession } from '@/lib/auth';
 
 export async function PUT(
@@ -14,14 +14,14 @@ export async function PUT(
 
   const { type, id } = await params;
 
-  if (!isSupportedDataType(type)) {
+  if (!DataService.isSupportedDataType(type)) {
     return NextResponse.json({ ok: false, error: 'Invalid type' }, { status: 400 });
   }
 
   const body = await request.json();
 
   try {
-    const updated = await updateItem(type, id, body);
+    const updated = await DataService.updateItem(type as any, id, body);
     if (!updated) {
       return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
     }
@@ -46,12 +46,12 @@ export async function DELETE(
 
   const { type, id } = await params;
 
-  if (!isSupportedDataType(type)) {
+  if (!DataService.isSupportedDataType(type)) {
     return NextResponse.json({ ok: false, error: 'Invalid type' }, { status: 400 });
   }
 
   try {
-    const deleted = await deleteItem(type, id);
+    const deleted = await DataService.deleteItem(type as any, id);
     if (!deleted) {
       return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
     }
