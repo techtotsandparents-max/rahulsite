@@ -76,7 +76,6 @@ export default function AdminLoginCard({
               type="button"
               className="al-btn al-btn--microsoft"
               onClick={() => {
-                // Route directly to Azure Easy Auth and redirect back to the callbackUrl
                 window.location.href = `/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(callbackUrl)}`;
               }}
             >
