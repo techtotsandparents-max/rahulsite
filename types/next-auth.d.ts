@@ -2,6 +2,7 @@ import { DefaultSession } from 'next-auth';
 
 declare module 'next-auth' {
   interface Session {
+    authProvider?: 'easy-auth';
     user?: DefaultSession['user'] & {
       isAdmin?: boolean;
     };

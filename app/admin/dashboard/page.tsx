@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { Loader2, LogOut, Trash2 } from 'lucide-react';
 import AdminGuard from '@/components/admin/AdminGuard';
 import PostEditor, { type PostDraft } from '@/components/admin/PostEditor';
@@ -35,6 +35,7 @@ const tabs: Array<{ id: TabId; label: string }> = [
 ];
 
 function AdminDashboardContent() {
+  const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState<TabId>('blogs');
   const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState('');
@@ -120,7 +121,11 @@ function AdminDashboardContent() {
           <h1>RahulTech Studio</h1>
           <p className="cms-source">Data source: {source || 'loading'}</p>
         </div>
-        <button className="cms-logout" onClick={() => signOut({ callbackUrl: '/' })}>
+        <button className="cms-logout" onClick={() => signOut({
+          callbackUrl: session?.authProvider === 'easy-auth'
+            ? '/.auth/logout?post_logout_redirect_uri=%2F'
+            : '/',
+        })}>
           <LogOut size={14} /> Sign out
         </button>
       </header>

@@ -8,6 +8,7 @@ import { ShieldCheck, Loader2 } from 'lucide-react';
 interface AdminLoginCardProps {
   callbackUrl: string;
   hasAccessError: boolean;
+  useEasyAuth: boolean;
   providerAvailability: {
     google: boolean;
     azureAd: boolean;
@@ -18,6 +19,7 @@ interface AdminLoginCardProps {
 export default function AdminLoginCard({
   callbackUrl,
   hasAccessError,
+  useEasyAuth,
   providerAvailability,
 }: AdminLoginCardProps) {
   const [loading, setLoading] = useState(false);
@@ -25,7 +27,9 @@ export default function AdminLoginCard({
   const { data: session } = useSession();
   const authUser = session?.user;
 
-  const signInUrl = `/api/auth/signin/azure-ad?callbackUrl=${encodeURIComponent(callbackUrl)}`;
+  const signInUrl = useEasyAuth
+    ? `/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(callbackUrl)}`
+    : `/api/auth/signin/azure-ad?callbackUrl=${encodeURIComponent(callbackUrl)}`;
 
   const handleLogin = async (event: MouseEvent<HTMLAnchorElement>) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
@@ -84,9 +88,9 @@ export default function AdminLoginCard({
           </div>
         )}
 
-        {(!providerAvailability.azureAd || loginError) && (
+        {((!useEasyAuth && !providerAvailability.azureAd) || loginError) && (
           <div className="admin-login-error" role="alert">
-            {!providerAvailability.azureAd
+            {!useEasyAuth && !providerAvailability.azureAd
               ? 'Microsoft Entra ID sign-in is not configured. Please check the server authentication settings.'
               : loginError}
           </div>
@@ -98,7 +102,7 @@ export default function AdminLoginCard({
             id="btn-entra-login"
             className="admin-login-btn"
             href={signInUrl}
-            onClick={handleLogin}
+            onClick={useEasyAuth ? undefined : handleLogin}
             aria-busy={loading}
             aria-label="Sign in with Microsoft Entra ID"
           >
@@ -136,6 +140,7 @@ export default function AdminLoginCard({
         .admin-login-bg {
           position: absolute;
           inset: 0;
+          pointer-events: none;
           background:
             radial-gradient(ellipse at 30% 50%, rgba(105, 88, 255, 0.1) 0%, transparent 55%),
             radial-gradient(ellipse at 70% 30%, rgba(6, 182, 212, 0.06) 0%, transparent 50%);

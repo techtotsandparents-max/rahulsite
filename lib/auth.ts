@@ -2,6 +2,8 @@ import { type NextAuthOptions, getServerSession } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import AzureADProvider from 'next-auth/providers/azure-ad';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import { headers } from 'next/headers';
+import { getEasyAuthSession } from '@/lib/azure/easy-auth';
 
 const adminEmails = (process.env.ADMIN_EMAILS ?? '')
   .split(',')
@@ -108,9 +110,9 @@ export const authOptions: NextAuthOptions = {
 };
 
 export async function getAdminSession() {
+  const easyAuthSession = await getEasyAuthSession(await headers());
+  if (easyAuthSession) return easyAuthSession;
   return getServerSession(authOptions);
 }
 
-export function isAdminEmail(email?: string | null) {
-  return adminEmails.includes((email ?? '').toLowerCase());
-}
+export { isAdminEmail } from '@/lib/azure/easy-auth';

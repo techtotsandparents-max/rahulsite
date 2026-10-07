@@ -3,6 +3,40 @@
 ## Overview
 This skill provides a complete, battle-tested authentication and authorization pattern for **Azure Web App** (App Service) using **Microsoft Entra ID** (Azure AD) Easy Auth and **System-Assigned Managed Identity** for backend storage access.
 
+## RahulSite Admin Login
+
+The navbar Admin Login icon and the deployed `/admin` page use a native link to
+`/.auth/login/aad?post_login_redirect_uri=%2Fadmin%2Fdashboard`. No React click
+handler is required for Azure sign-in.
+
+Required Azure settings:
+
+- Keep App Service Authentication enabled, with Microsoft as the provider.
+- Keep **Allow unauthenticated requests** so the public website stays public.
+- Keep the token store enabled.
+- In the `prodwebapp` Entra registration, add this **Web** redirect URI without
+  removing callbacks used by other apps:
+  `https://rahulsite-cga7gwaye4g0f0hy.southindia-01.azurewebsites.net/.auth/login/aad/callback`.
+- Set `ADMIN_EMAILS` in App Service environment variables to the intended admin
+  email(s), separated by commas. Matching ignores case and surrounding spaces.
+- `WEBSITE_HOSTNAME` is supplied by App Service. The backend uses this trusted
+  hostname, not a browser-supplied host, when asking Azure to validate the session.
+
+The backend validates the incoming App Service session cookie through
+`/.auth/me` before applying the admin allowlist. It does not authorize users from
+unverified identity headers. The proxy, server-side admin APIs, and browser
+session endpoint all recognize this Azure session. Tokens from `/.auth/me` are
+never included in the browser session response. Admin writes also require a
+same-origin request; custom domains must match the origin in `NEXTAUTH_URL`.
+
+NextAuth remains available for local development and existing NextAuth sessions.
+Its `/api/auth/callback/azure-ad` callback is separate from the Easy Auth callback
+above. Admin sign-out clears NextAuth and then the Azure session when applicable.
+
+Deploy the authentication changes together. Run the focused regression checks
+with `node --test lib/azure/easy-auth.test.mjs`. A real Entra account is still
+required to verify the deployed sign-in and sign-out end to end.
+
 ---
 
 ## Architecture

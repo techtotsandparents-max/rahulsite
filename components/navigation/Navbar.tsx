@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Coffee, Sun, Moon, Search, Volume2, Rss, ShieldCheck, LogOut, User } from 'lucide-react';
@@ -15,7 +15,6 @@ export function TopNavToolbar() {
   const { data: session } = useSession();
   const isAdminSession = Boolean(session?.user?.isAdmin);
   const [authUser, setAuthUser] = useState<any>(null);
-  const router = useRouter();
 
   useEffect(() => {
     async function fetchUser() {
@@ -108,7 +107,11 @@ export function TopNavToolbar() {
 
       {isAdminSession ? (
         <button
-          onClick={() => signOut({ callbackUrl: '/' })}
+          onClick={() => signOut({
+            callbackUrl: session?.authProvider === 'easy-auth'
+              ? '/.auth/logout?post_logout_redirect_uri=%2F'
+              : '/',
+          })}
           className="nav-icon-btn nav-icon-btn--admin"
           aria-label="Sign out admin"
           title="Sign out admin"
@@ -116,14 +119,14 @@ export function TopNavToolbar() {
           <LogOut size={16} />
         </button>
       ) : (
-        <button
-          onClick={() => router.push('/admin')}
+        <a
+          href="/.auth/login/aad?post_login_redirect_uri=%2Fadmin%2Fdashboard"
           className="nav-icon-btn nav-icon-btn--admin"
           aria-label="Admin login"
           title="Admin Login"
         >
           <ShieldCheck size={16} />
-        </button>
+        </a>
       )}
 
       <style jsx>{`
