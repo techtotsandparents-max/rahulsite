@@ -7,6 +7,8 @@ import { GithubIcon } from '@/components/icons/SocialIcons';
 import Navbar from '@/components/navigation/Navbar';
 import SunsetFooter from '@/components/footer/SunsetFooter';
 import { projectFixtures } from '@/lib/fixtures';
+import { useContent } from '@/components/admin/useContent';
+import ContentTools from '@/components/admin/ContentTools';
 
 const techColors: Record<string, string> = {
   'Terraform': '#7B42BC',
@@ -24,6 +26,7 @@ const techColors: Record<string, string> = {
 };
 
 export default function ProjectsPage() {
+  const content = useContent('projects', projectFixtures);
   return (
     <>
       <Navbar />
@@ -41,12 +44,15 @@ export default function ProjectsPage() {
             <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 700, marginBottom: '8px' }}>
               Projects
             </h1>
+            <ContentTools type="projects" source={content.source} onChanged={content.reload} importItems={content.items.length === 0 ? projectFixtures : undefined} />
+            {content.error && <p role="alert">{content.error}</p>}
             <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', marginBottom: '48px', maxWidth: '600px' }}>
               Open-source projects, architecture patterns, and engineering samples.
             </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '24px', paddingBottom: '80px' }}>
-              {projectFixtures.map((project, i) => (
+            {!content.loading && content.items.length === 0 && <p>No projects published yet.</p>}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(380px, 100%), 1fr))', gap: '24px', paddingBottom: '80px' }}>
+              {content.items.map((project, i) => (
                 <motion.article
                   key={project.slug}
                   className="glass-card glass-card-hover"
@@ -55,6 +61,7 @@ export default function ProjectsPage() {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}
                 >
+                  {project.coverImage && <img src={project.coverImage} alt={project.title} style={{ width: '100%', height: 200, objectFit: 'cover' }} />}
                   <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem', fontWeight: 600 }}>
                     {project.title}
                   </h3>
@@ -108,6 +115,8 @@ export default function ProjectsPage() {
                       <ExternalLink size={14} /> Details
                     </Link>
                   </div>
+                  {project.isPublished === false && <small>Draft</small>}
+                  <ContentTools type="projects" item={project} source={content.source} onChanged={content.reload} />
                 </motion.article>
               ))}
             </div>

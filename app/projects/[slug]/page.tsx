@@ -8,19 +8,17 @@ import { GithubIcon } from '@/components/icons/SocialIcons';
 import Navbar from '@/components/navigation/Navbar';
 import SunsetFooter from '@/components/footer/SunsetFooter';
 import { projectFixtures } from '@/lib/fixtures';
+import { useContent } from '@/components/admin/useContent';
+import ContentTools from '@/components/admin/ContentTools';
+import ContentBody from '@/components/sections/ContentBody';
 
 export default function ProjectSlugPage() {
   const params = useParams();
   const slug = params?.slug as string;
 
-  const project = projectFixtures.find((p) => p.slug === slug) || {
-    slug,
-    title: slug ? slug.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()) : 'Project Details',
-    description: 'Production architecture pattern and code samples.',
-    tech: ['Terraform', 'Azure', 'TypeScript', 'Next.js'],
-    githubUrl: 'https://github.com/rahultripathi',
-    isPlaceholder: true as const,
-  };
+  const content = useContent('projects', projectFixtures);
+  const project = content.items.find((entry) => entry.slug === slug);
+  if (!project) return <><Navbar /><main id="main-content" className="container-site" style={{ paddingTop: 120, minHeight: '70vh' }}><p>{content.error || (content.loading ? 'Loading project...' : 'Project not found.')}</p><Link href="/projects">Back to projects</Link></main><SunsetFooter /></>;
 
   return (
     <>
@@ -43,6 +41,8 @@ export default function ProjectSlugPage() {
             <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 700, marginBottom: '16px' }}>
               {project.title}
             </h1>
+            <ContentTools type="projects" item={project} source={content.source} onChanged={content.reload} />
+            {project.coverImage && <img src={project.coverImage} alt={project.title} style={{ width: '100%', maxHeight: 500, objectFit: 'cover' }} />}
 
             <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '32px' }}>
               {project.description}
@@ -73,9 +73,7 @@ export default function ProjectSlugPage() {
               <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem' }}>
                 Architecture &amp; Key Features
               </h2>
-              <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.8 }}>
-                Designed using Azure-native best practices with zero hardcoded credentials and strict security boundaries.
-              </p>
+              <ContentBody content={project.content || ''} photos={project.photos} videos={project.videos} />
               
               {project.githubUrl && (
                 <a

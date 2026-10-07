@@ -1,6 +1,6 @@
 import { AzureCosmosClient } from '@/lib/azure/cosmos';
 
-export type DataType = 'blogs' | 'adventures' | 'projects' | 'videos' | 'settings';
+export type DataType = 'blogs' | 'adventures' | 'projects' | 'videos' | 'settings' | 'about';
 
 const collectionMap: Record<DataType, string> = {
   blogs: 'posts',
@@ -8,6 +8,7 @@ const collectionMap: Record<DataType, string> = {
   projects: 'projects',
   videos: 'videos',
   settings: 'settings',
+  about: 'about',
 };
 
 /**
@@ -16,7 +17,7 @@ const collectionMap: Record<DataType, string> = {
  */
 export class DataService {
   public static isSupportedDataType(type: string): type is DataType {
-    return type in collectionMap;
+    return Object.hasOwn(collectionMap, type);
   }
 
   public static isDatabaseConfigured() {

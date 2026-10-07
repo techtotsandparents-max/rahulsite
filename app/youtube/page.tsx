@@ -1,11 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowLeft, Play, ExternalLink, Clock, Filter } from 'lucide-react';
 import Navbar from '@/components/navigation/Navbar';
 import SunsetFooter from '@/components/footer/SunsetFooter';
 import { videoFixtures } from '@/lib/fixtures';
+import { useContent } from '@/components/admin/useContent';
+import ContentTools from '@/components/admin/ContentTools';
+import YouTubeChannel from '@/components/sections/YouTubeChannel';
 
 const topicColors: Record<string, string> = {
   'LLMs': '#00C9A7',
@@ -17,6 +21,10 @@ const topicColors: Record<string, string> = {
 const topics = ['All', 'LLMs', 'System Design', 'Cloud Architecture', 'Deep Learning'];
 
 export default function YouTubePage() {
+  const content = useContent('videos', videoFixtures);
+  const [selectedTopic, setSelectedTopic] = useState('All');
+  const [playing, setPlaying] = useState<string | null>(null);
+  const availableTopics = [...new Set([...topics, ...content.items.map((item) => item.topic)])];
   return (
     <>
       <Navbar />
@@ -37,18 +45,23 @@ export default function YouTubePage() {
             <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', marginBottom: '32px', maxWidth: '600px' }}>
               Karpathy-style video lectures on AI, cloud architecture, system design, and deep learning.
             </p>
+            <YouTubeChannel />
+            <ContentTools type="videos" source={content.source} onChanged={content.reload} importItems={content.items.length === 0 ? videoFixtures : undefined} />
+            {content.error && <p role="alert">{content.error}</p>}
 
             {/* Topic Filter */}
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '40px' }}>
-              {topics.map((topic) => (
+              {availableTopics.map((topic) => (
                 <button
                   key={topic}
+                  onClick={() => setSelectedTopic(topic)}
+                  aria-pressed={selectedTopic === topic}
                   style={{
                     padding: '8px 16px',
                     borderRadius: '10px',
                     border: '1px solid var(--border-subtle)',
-                    background: topic === 'All' ? 'var(--accent-tech-dim)' : 'rgba(13, 27, 62, 0.5)',
-                    color: topic === 'All' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                    background: topic === selectedTopic ? 'var(--accent-tech-dim)' : 'rgba(13, 27, 62, 0.5)',
+                    color: topic === selectedTopic ? 'var(--text-primary)' : 'var(--text-secondary)',
                     fontSize: '0.82rem',
                     fontWeight: 500,
                     cursor: 'pointer',
@@ -67,7 +80,7 @@ export default function YouTubePage() {
 
             {/* Video Grid */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px', paddingBottom: '80px' }}>
-              {videoFixtures.map((video, i) => (
+              {content.items.filter((video) => selectedTopic === 'All' || video.topic === selectedTopic).map((video, i) => (
                 <motion.div
                   key={video.youtubeId}
                   className="glass-card glass-card-hover"
@@ -76,23 +89,25 @@ export default function YouTubePage() {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   style={{ overflow: 'hidden' }}
                 >
-                  <div style={{
+                  {playing === video.youtubeId ? <iframe src={`https://www.youtube-nocookie.com/embed/${encodeURIComponent(video.youtubeId)}?autoplay=1`} title={video.title} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen style={{ width: '100%', aspectRatio: '16/9', border: 0 }} /> : <div style={{
                     aspectRatio: '16/9',
-                    background: `linear-gradient(135deg, ${topicColors[video.topic] || '#6958FF'}20, ${topicColors[video.topic] || '#6958FF'}08)`,
+                    backgroundImage: `url(https://i.ytimg.com/vi/${encodeURIComponent(video.youtubeId)}/hqdefault.jpg)`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
                     position: 'relative',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}>
-                    <div style={{
+                    <button type="button" aria-label={`Play ${video.title}`} onClick={() => setPlaying(video.youtubeId)} style={{
                       width: '56px', height: '56px', borderRadius: '50%',
                       background: 'rgba(105, 88, 255, 0.8)', display: 'flex',
                       alignItems: 'center', justifyContent: 'center', paddingLeft: '3px',
                       boxShadow: '0 4px 20px rgba(105, 88, 255, 0.4)',
                     }}>
                       <Play size={24} fill="white" color="white" />
-                    </div>
+                    </button>
                     <span style={{
                       position: 'absolute', bottom: '8px', right: '8px',
                       display: 'flex', alignItems: 'center', gap: '4px',
@@ -101,7 +116,7 @@ export default function YouTubePage() {
                     }}>
                       <Clock size={10} /> {video.duration}
                     </span>
-                  </div>
+                  </div>}
                   <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <span style={{ fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: topicColors[video.topic] || '#6958FF' }}>
                       {video.topic}
@@ -110,7 +125,7 @@ export default function YouTubePage() {
                       {video.title}
                     </h3>
                     <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                      <button style={{
+                      <button onClick={() => setPlaying(video.youtubeId)} style={{
                         display: 'inline-flex', alignItems: 'center', gap: '4px',
                         padding: '8px 16px', borderRadius: '8px', fontSize: '0.78rem', fontWeight: 500,
                         cursor: 'pointer', background: 'var(--accent-tech-dim)', border: '1px solid var(--border-subtle)',
@@ -132,6 +147,7 @@ export default function YouTubePage() {
                         <ExternalLink size={13} /> Watch on YouTube
                       </a>
                     </div>
+                    <ContentTools type="videos" item={video} source={content.source} onChanged={content.reload} />
                   </div>
                 </motion.div>
               ))}

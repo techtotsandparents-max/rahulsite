@@ -1,4 +1,6 @@
 import { AzureStorageClient } from '@/lib/azure/storage';
+import { fileTypeFromBuffer } from 'file-type';
+import { randomUUID } from 'node:crypto';
 
 const ALLOWED_PREFIXES = ['image/', 'video/'];
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'mp4'];
@@ -39,14 +41,18 @@ export class MediaService {
 
     // 1. Prepare data
     const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '-').toLowerCase();
-    const blobName = `${Date.now()}-${safeName}`;
     const data = await file.arrayBuffer();
+    const detected = await fileTypeFromBuffer(data);
+    if (!detected || !['image/jpeg', 'image/png', 'image/webp', 'video/mp4'].includes(detected.mime) || detected.mime !== file.type) {
+      throw new Error('The file contents do not match a supported image or MP4 video.');
+    }
+    const blobName = `${randomUUID()}-${safeName}`;
 
     // 2. Delegate to Infrastructure Client (Azure)
     const { url } = await AzureStorageClient.uploadBlob(
       Buffer.from(data),
       blobName,
-      file.type
+      detected.mime
     );
 
     // 3. Return normalized result

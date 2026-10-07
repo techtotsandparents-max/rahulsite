@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  experimental: { proxyClientMaxBodySize: '110mb' },
 
   // ── Image Optimization — Whitelisted Remote Domains ──
   images: {

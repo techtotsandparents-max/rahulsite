@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { GithubIcon, YoutubeIcon, LinkedinIcon, TwitterIcon, InstagramIcon } from '@/components/icons/SocialIcons';
 import { adventureFixtures } from '@/lib/fixtures';
+import { useContent } from '@/components/admin/useContent';
 
 const SOCIAL_LINKS = [
   { name: 'GitHub', Icon: GithubIcon, url: 'https://github.com/rahultripathi' },
@@ -30,8 +31,11 @@ const STATS = [
 export default function CurrentAdventureSection() {
   const [activeIdx, setActiveIdx] = useState(0);
   const router = useRouter();
-  const adventures = adventureFixtures;
+  const content = useContent('adventures', adventureFixtures);
+  const adventures = content.items.filter((entry) => entry.isPublished !== false);
   const currentTrip = adventures[activeIdx] || adventures[0];
+
+  if (!currentTrip) return null;
 
   const handlePrev = () => {
     setActiveIdx((prev) => (prev > 0 ? prev - 1 : adventures.length - 1));
@@ -115,7 +119,7 @@ export default function CurrentAdventureSection() {
                   <span>{currentTrip.country}</span>
                 </Link>
                 <p className="cas-loc-cities">{currentTrip.cities.join(' • ')}</p>
-                <p className="cas-loc-date">{currentTrip.visitedAt ? 'May 2026' : 'Active'}</p>
+                <p className="cas-loc-date">{new Date(currentTrip.visitedAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</p>
 
                 {/* Read Story CTA Link Button */}
                 <Link

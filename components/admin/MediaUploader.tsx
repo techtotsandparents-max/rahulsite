@@ -6,9 +6,10 @@ import { Upload, Loader2, CheckCircle2, AlertTriangle } from 'lucide-react';
 interface MediaUploaderProps {
   onUploaded: (url: string) => void;
   accept?: string;
+  onBusyChange?: (busy: boolean) => void;
 }
 
-export default function MediaUploader({ onUploaded, accept = 'image/*,video/mp4' }: MediaUploaderProps) {
+export default function MediaUploader({ onUploaded, accept = 'image/*,video/mp4', onBusyChange }: MediaUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [progress, setProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
@@ -21,10 +22,12 @@ export default function MediaUploader({ onUploaded, accept = 'image/*,video/mp4'
   );
 
   function uploadFile(file: File) {
+    if (uploading) return;
     setError('');
     setSuccess('');
     setProgress(0);
     setUploading(true);
+    onBusyChange?.(true);
 
     const formData = new FormData();
     formData.append('file', file);
@@ -32,6 +35,9 @@ export default function MediaUploader({ onUploaded, accept = 'image/*,video/mp4'
     const xhr = new XMLHttpRequest();
     xhr.open('POST', '/api/admin/upload');
     xhr.withCredentials = true;
+    xhr.timeout = 300000;
+    xhr.onloadend = () => onBusyChange?.(false);
+    xhr.ontimeout = () => { setUploading(false); setError('Upload timed out. Please retry.'); };
 
     xhr.upload.onprogress = (event) => {
       if (!event.lengthComputable) {
@@ -153,7 +159,7 @@ export default function MediaUploader({ onUploaded, accept = 'image/*,video/mp4'
 
         .media-progress {
           margin-top: 10px;
-          height: 10px;
+          height: 28px;
           border-radius: 999px;
           background: rgba(255, 255, 255, 0.12);
           position: relative;
@@ -167,7 +173,9 @@ export default function MediaUploader({ onUploaded, accept = 'image/*,video/mp4'
         }
 
         .media-progress__text {
-          margin-top: 8px;
+          position: absolute;
+          inset: 0;
+          justify-content: center;
           display: inline-flex;
           align-items: center;
           gap: 6px;

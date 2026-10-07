@@ -11,6 +11,19 @@ import { SecretClient } from '@azure/keyvault-secrets';
 export class AzureStorageClient {
   private static connectionString: string | undefined;
 
+  private static async getContainer() {
+    const accountUrl = process.env.AZURE_STORAGE_ACCOUNT_URL;
+    const client = accountUrl
+      ? new BlobServiceClient(accountUrl, new DefaultAzureCredential())
+      : BlobServiceClient.fromConnectionString(await this.getConnectionString());
+    return client.getContainerClient(process.env.AZURE_STORAGE_CONTAINER ?? 'uploads');
+  }
+
+  public static async getBlob(blobName: string) {
+    const container = await this.getContainer();
+    return container.getBlobClient(blobName);
+  }
+
   private static async getConnectionString(): Promise<string> {
     // Return cached connection string if we already have it
     if (this.connectionString) return this.connectionString;
@@ -48,12 +61,8 @@ export class AzureStorageClient {
     blobName: string,
     mimeType: string
   ): Promise<{ url: string }> {
-    const connectionString = await this.getConnectionString();
-    const containerName = process.env.AZURE_STORAGE_CONTAINER ?? 'uploads';
     const cdnBase = process.env.AZURE_STORAGE_CDN_URL;
-
-    const blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
-    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const containerClient = await this.getContainer();
     
     await containerClient.createIfNotExists();
 
@@ -67,7 +76,7 @@ export class AzureStorageClient {
 
     const url = cdnBase
       ? `${cdnBase.replace(/\/$/, '')}/${blobName}`
-      : blobClient.url;
+      : `/api/media/${encodeURIComponent(blobName)}`;
 
     return { url };
   }

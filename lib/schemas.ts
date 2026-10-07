@@ -55,3 +55,12 @@ export interface VideoSchema {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export interface YouTubeChannelSnapshot {
+  channelId: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  syncedAt: string;
+  playlists: { id: string; title: string; description: string; thumbnail: string; itemCount: number }[];
+}

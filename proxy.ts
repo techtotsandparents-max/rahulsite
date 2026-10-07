@@ -46,6 +46,9 @@ export async function proxy(request: NextRequest) {
       if (easyAuthSession) signInUrl.searchParams.set('error', 'AccessDenied');
       return addSecurityHeaders(NextResponse.redirect(signInUrl));
     }
+    if (pathname === '/admin/dashboard') {
+      return addSecurityHeaders(NextResponse.redirect(new URL('/blog', request.url)));
+    }
   }
 
   // ── Admin API routes ──

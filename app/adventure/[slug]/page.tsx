@@ -8,6 +8,9 @@ import { ArrowLeft, MapPin, Calendar, Camera, Plane, Clock, Star, CheckCircle } 
 import Navbar from '@/components/navigation/Navbar';
 import SunsetFooter from '@/components/footer/SunsetFooter';
 import { adventureFixtures } from '@/lib/fixtures';
+import { useContent } from '@/components/admin/useContent';
+import ContentTools from '@/components/admin/ContentTools';
+import ContentBody from '@/components/sections/ContentBody';
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
@@ -17,7 +20,9 @@ export default function AdventureDetailPage() {
   const params = useParams();
   const slug = params?.slug as string;
 
-  const adventure = adventureFixtures.find((a) => a.slug === slug) || adventureFixtures[0];
+  const content = useContent('adventures', adventureFixtures);
+  const adventure = content.items.find((entry) => entry.slug === slug);
+  if (!adventure) return <><Navbar /><main id="main-content" className="container-site" style={{ paddingTop: 120, minHeight: '70vh' }}><p>{content.error || (content.loading ? 'Loading travel story...' : 'Travel story not found.')}</p><Link href="/travel">Back to travel</Link></main><SunsetFooter /></>;
 
   const styleMap = {
     'remote-work': { label: '💻 Remote Work', color: '#6958FF' },
@@ -44,7 +49,7 @@ export default function AdventureDetailPage() {
               transition={{ duration: 0.55 }}
               className="adv-detail__hero-content"
             >
-              <Link href="/adventure" className="adv-detail__back">
+              <Link href="/travel" className="adv-detail__back">
                 <ArrowLeft size={16} /> Back to Adventures
               </Link>
 
@@ -87,6 +92,7 @@ export default function AdventureDetailPage() {
                   alt="Rahul at this location"
                   width={140}
                   height={140}
+                  unoptimized
                   className="adv-detail__profile-img"
                   style={{ width: '140px', height: '140px' }}
                 />
@@ -99,6 +105,7 @@ export default function AdventureDetailPage() {
 
         {/* ── Content ── */}
         <div className="container-site adv-detail__body">
+          <ContentTools type="adventures" item={adventure} source={content.source} onChanged={content.reload} />
 
           {/* Excerpt */}
           <motion.p
@@ -114,6 +121,7 @@ export default function AdventureDetailPage() {
 
             {/* Left: Highlights + Photos */}
             <div className="adv-detail__main">
+              <ContentBody content={adventure.content || ''} videos={adventure.videos} />
 
               {/* Highlights */}
               <div className="adv-detail__section">
@@ -194,11 +202,11 @@ export default function AdventureDetailPage() {
               {/* More adventures */}
               <div className="adv-detail__more">
                 <h3 className="adv-detail__info-title">More Adventures</h3>
-                {adventureFixtures
+                {content.items
                   .filter((a) => a.slug !== adventure.slug)
                   .slice(0, 3)
                   .map((a) => (
-                    <Link key={a.slug} href={`/adventure/${a.slug}`} className="adv-detail__more-item">
+                    <Link key={a.slug} href={`/travel/${a.slug}`} className="adv-detail__more-item">
                       <img src={a.coverImage} alt={a.destination} className="adv-detail__more-thumb" />
                       <div>
                         <p className="adv-detail__more-dest">{a.emoji} {a.destination}</p>

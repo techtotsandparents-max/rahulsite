@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight, Clock, Tag } from 'lucide-react';
 import { blogFixtures } from '@/lib/fixtures';
+import { useContent } from '@/components/admin/useContent';
 
 const categoryColors: Record<string, string> = {
   CLOUD_ARCHITECTURE: '#6958FF',
@@ -20,6 +21,7 @@ const categoryLabels: Record<string, string> = {
 };
 
 export default function LatestArticles() {
+  const content = useContent('blogs', blogFixtures);
   return (
     <section id="latest-articles" className="articles" aria-label="Latest Articles">
       <div className="articles__container container-site">
@@ -37,7 +39,7 @@ export default function LatestArticles() {
         </motion.div>
 
         <div className="articles__grid">
-          {blogFixtures.slice(0, 3).map((post, i) => (
+          {content.items.filter((post) => post.isPublished !== false).slice(0, 3).map((post, i) => (
             <motion.article
               key={post.slug}
               className="article-card glass-card glass-card-hover"
@@ -55,6 +57,7 @@ export default function LatestArticles() {
                     }}
                   />
                   <div className="article-card__cover-pattern" />
+                  {post.coverImage && <img src={post.coverImage} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} />}
                 </div>
                 <div className="article-card__body">
                   <div className="article-card__meta">

@@ -6,7 +6,7 @@ This skill provides a complete, battle-tested authentication and authorization p
 ## RahulSite Admin Login
 
 The navbar Admin Login icon and the deployed `/admin` page use a native link to
-`/.auth/login/aad?post_login_redirect_uri=%2Fadmin%2Fdashboard`. No React click
+`/.auth/login/aad?post_login_redirect_uri=%2Fblog`. No React click
 handler is required for Azure sign-in.
 
 Required Azure settings:

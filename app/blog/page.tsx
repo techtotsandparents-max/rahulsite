@@ -1,11 +1,14 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowLeft, Tag, Clock, Search } from 'lucide-react';
 import Navbar from '@/components/navigation/Navbar';
 import SunsetFooter from '@/components/footer/SunsetFooter';
 import { blogFixtures } from '@/lib/fixtures';
+import { useContent } from '@/components/admin/useContent';
+import ContentTools from '@/components/admin/ContentTools';
 
 const categoryColors: Record<string, string> = {
   CLOUD_ARCHITECTURE: '#6958FF',
@@ -22,6 +25,9 @@ const categoryLabels: Record<string, string> = {
 };
 
 export default function BlogPage() {
+  const content = useContent('blogs', blogFixtures);
+  const [search, setSearch] = useState('');
+  const posts = content.items.filter((post) => `${post.title} ${post.excerpt}`.toLowerCase().includes(search.toLowerCase()));
   return (
     <>
       <Navbar />
@@ -39,6 +45,8 @@ export default function BlogPage() {
             <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 700, marginBottom: '8px' }}>
               Blog
             </h1>
+            <ContentTools type="blogs" source={content.source} onChanged={content.reload} importItems={content.items.length === 0 ? blogFixtures : undefined} />
+            {content.error && <p role="alert">{content.error}</p>}
             <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', marginBottom: '40px', maxWidth: '600px' }}>
               In-depth tutorials on cloud architecture, AI lessons, travel journals, and engineering insights.
             </p>
@@ -48,6 +56,9 @@ export default function BlogPage() {
               <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input
                 type="text"
+                aria-label="Search articles"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search articles..."
                 style={{
                   width: '100%',
@@ -65,22 +76,23 @@ export default function BlogPage() {
             </div>
 
             {/* Blog Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px', paddingBottom: '80px' }}>
-              {blogFixtures.map((post, i) => (
+            {!content.loading && posts.length === 0 && <p>No articles found.</p>}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(340px, 100%), 1fr))', gap: '24px', paddingBottom: '80px' }}>
+              {posts.map((post, i) => (
                 <motion.article
                   key={post.slug}
                   className="glass-card glass-card-hover"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
-                  style={{ overflow: 'hidden' }}
+                  style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
                 >
-                  <Link href={`/blog/${post.slug}`} style={{ display: 'flex', flexDirection: 'column', textDecoration: 'none', color: 'inherit', height: '100%' }}>
+                  <Link href={`/blog/${post.slug}`} style={{ display: 'flex', flexDirection: 'column', textDecoration: 'none', color: 'inherit', flex: 1 }}>
                     <div style={{
                       height: '140px',
                       background: `linear-gradient(135deg, ${categoryColors[post.category]}22, ${categoryColors[post.category]}08)`,
                       position: 'relative',
-                    }} />
+                    }}>{post.coverImage && <img src={post.coverImage} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}</div>
                     <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <span style={{
@@ -106,6 +118,10 @@ export default function BlogPage() {
                       </time>
                     </div>
                   </Link>
+                  <div style={{ padding: '0 20px' }}>
+                    {post.isPublished === false && <small>Draft</small>}
+                    <ContentTools type="blogs" item={post} source={content.source} onChanged={content.reload} />
+                  </div>
                 </motion.article>
               ))}
             </div>

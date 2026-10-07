@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DataService } from '@/services/DataService';
 import { getAdminSession } from '@/lib/auth';
+import { contentSchemas, type ContentType } from '@/lib/content';
 
 export async function PUT(
   request: NextRequest,
@@ -18,10 +19,25 @@ export async function PUT(
     return NextResponse.json({ ok: false, error: 'Invalid type' }, { status: 400 });
   }
 
-  const body = await request.json();
+  const body = await request.json().catch(() => null);
+  const schema = contentSchemas[type as ContentType];
+  const parsed = schema?.safeParse(body);
+  if (schema && !parsed?.success) {
+    return NextResponse.json({ ok: false, error: parsed?.error?.issues[0]?.message ?? 'Invalid content' }, { status: 400 });
+  }
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return NextResponse.json({ ok: false, error: 'Invalid content' }, { status: 400 });
+  }
+  const update = { ...(parsed?.success ? parsed.data : body), id, updatedAt: new Date().toISOString() };
+  delete update._id;
+  delete update.createdAt;
 
   try {
-    const updated = await DataService.updateItem(type as any, id, body);
+    const items = await DataService.listItems(type);
+    if (update.slug && items.some((item) => item.id !== id && item.slug === update.slug)) {
+      return NextResponse.json({ ok: false, error: 'This slug already exists.' }, { status: 409 });
+    }
+    const updated = await DataService.updateItem(type, id, update);
     if (!updated) {
       return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
     }
@@ -51,7 +67,7 @@ export async function DELETE(
   }
 
   try {
-    const deleted = await DataService.deleteItem(type as any, id);
+    const deleted = await DataService.deleteItem(type, id);
     if (!deleted) {
       return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
     }

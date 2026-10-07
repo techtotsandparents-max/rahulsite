@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight, Play, ExternalLink, Clock } from 'lucide-react';
 import { videoFixtures } from '@/lib/fixtures';
+import { useContent } from '@/components/admin/useContent';
 
 const topicColors: Record<string, string> = {
   'LLMs': '#00C9A7',
@@ -13,6 +14,7 @@ const topicColors: Record<string, string> = {
 };
 
 export default function LatestVideos() {
+  const content = useContent('videos', videoFixtures);
   return (
     <section id="latest-videos" className="videos" aria-label="Latest Video Lectures">
       <div className="videos__container container-site">
@@ -33,7 +35,7 @@ export default function LatestVideos() {
         </motion.div>
 
         <div className="videos__grid">
-          {videoFixtures.slice(0, 4).map((video, i) => (
+          {content.items.filter((video) => video.isPublished !== false).slice(0, 4).map((video, i) => (
             <motion.div
               key={video.youtubeId}
               className="video-card glass-card glass-card-hover"
@@ -68,10 +70,10 @@ export default function LatestVideos() {
                 </span>
                 <h3 className="video-card__title">{video.title}</h3>
                 <div className="video-card__actions">
-                  <button className="video-card__action" id={`video-watch-${video.youtubeId}`}>
+                  <Link href="/youtube" className="video-card__action" id={`video-watch-${video.youtubeId}`}>
                     <Play size={13} />
                     Watch
-                  </button>
+                  </Link>
                   <a
                     href={`https://youtube.com/watch?v=${video.youtubeId}`}
                     target="_blank"

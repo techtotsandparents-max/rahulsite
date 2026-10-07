@@ -7,6 +7,9 @@ import { ArrowLeft, Clock, Tag, Calendar, User } from 'lucide-react';
 import Navbar from '@/components/navigation/Navbar';
 import SunsetFooter from '@/components/footer/SunsetFooter';
 import { blogFixtures } from '@/lib/fixtures';
+import { useContent } from '@/components/admin/useContent';
+import ContentTools from '@/components/admin/ContentTools';
+import ContentBody from '@/components/sections/ContentBody';
 
 const categoryColors: Record<string, string> = {
   CLOUD_ARCHITECTURE: '#6958FF',
@@ -26,15 +29,9 @@ export default function BlogSlugPage() {
   const params = useParams();
   const slug = params?.slug as string;
 
-  const post = blogFixtures.find((p) => p.slug === slug) || {
-    slug,
-    title: slug ? slug.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()) : 'Article',
-    excerpt: 'Detailed article content, architectural patterns, and production engineering practices.',
-    category: 'CLOUD_ARCHITECTURE' as const,
-    readTime: 10,
-    publishedAt: '2026-08-15',
-    isPlaceholder: true as const,
-  };
+  const content = useContent('blogs', blogFixtures);
+  const post = content.items.find((entry) => entry.slug === slug);
+  if (!post) return <><Navbar /><main id="main-content" className="container-site" style={{ paddingTop: 120, minHeight: '70vh' }}><p>{content.error || (content.loading ? 'Loading article...' : 'Article not found.')}</p><Link href="/blog">Back to articles</Link></main><SunsetFooter /></>;
 
   return (
     <>
@@ -70,6 +67,9 @@ export default function BlogSlugPage() {
             <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 4vw, 3.2rem)', fontWeight: 700, lineHeight: 1.15, marginBottom: '20px' }}>
               {post.title}
             </h1>
+            <ContentTools type="blogs" item={post} source={content.source} onChanged={content.reload} />
+            {content.error && <p role="alert">{content.error}</p>}
+            {post.coverImage && <img src={post.coverImage} alt={post.title} style={{ width: '100%', maxHeight: 520, objectFit: 'cover', marginBottom: 24 }} />}
 
             <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '40px', paddingBottom: '24px', borderBottom: '1px solid var(--border-subtle)' }}>
               {post.excerpt}
@@ -91,30 +91,8 @@ export default function BlogSlugPage() {
             </div>
 
             {/* Article Content */}
-            <div className="glass-card" style={{ padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px', lineHeight: 1.8, fontSize: '0.95rem', color: 'var(--text-secondary)' }}>
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', color: 'var(--text-primary)', marginTop: '8px' }}>
-                Overview &amp; Architectural Objectives
-              </h2>
-              <p>
-                In high-throughput cloud environments, designing resilient system topologies requires decoupled components, idempotent messaging pipelines, and strict observability contracts.
-              </p>
-              
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', color: 'var(--text-primary)', marginTop: '16px' }}>
-                Key Technical Patterns
-              </h2>
-              <ul style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <li><strong>Event Sourcing &amp; CQRS</strong>: Separating read and write state stores to achieve sub-millisecond query performance.</li>
-                <li><strong>Dead Letter Queueing &amp; Retry Policies</strong>: Handling transient failures with exponential backoff and automated alerting.</li>
-                <li><strong>Azure Infrastructure as Code</strong>: Modular Terraform templates enforcing zero-trust networking and Azure Key Vault secret management.</li>
-              </ul>
-
-              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', color: 'var(--text-primary)', marginTop: '16px' }}>
-                Conclusion
-              </h2>
-              <p>
-                Building production systems on Azure demands zero reliance on magic or hardcoded values. By leveraging declarative IaC modules and robust telemetry, cloud architectures maintain reliability at scale.
-              </p>
-            </div>
+            <ContentBody content={post.content || ''} photos={post.photos} videos={post.videos} />
+            {post.externalUrl && <a href={post.externalUrl} target="_blank" rel="noopener noreferrer">Read the original article</a>}
           </motion.div>
         </div>
       </main>

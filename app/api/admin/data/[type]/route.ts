@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DataService } from '@/services/DataService';
 import { getAdminSession } from '@/lib/auth';
+import { contentSchemas, type ContentType } from '@/lib/content';
+import { randomUUID } from 'node:crypto';
 import {
   adventureFixtures,
   blogFixtures,
@@ -14,13 +16,14 @@ const fixtureMap = {
   projects: projectFixtures,
   videos: videoFixtures,
   settings: [],
+  about: [],
 };
 
-function normalizePayload(type: 'blogs' | 'adventures' | 'projects' | 'videos' | 'settings', payload: Record<string, unknown>) {
+function normalizePayload(type: string, payload: Record<string, unknown>): Record<string, unknown> {
   const now = new Date().toISOString();
   return {
     ...payload,
-    id: typeof payload.id === 'string' && payload.id ? payload.id : `${type}-${Date.now()}`,
+    id: typeof payload.id === 'string' && payload.id ? payload.id : `${type}-${randomUUID()}`,
     createdAt: payload.createdAt ?? now,
     updatedAt: now,
   };
@@ -41,10 +44,10 @@ export async function GET(
   }
 
   try {
-    const data = await DataService.listItems(type as any);
+    const data = await DataService.listItems(type);
     return NextResponse.json({ ok: true, data, source: 'cosmos' });
   } catch {
-    return NextResponse.json({ ok: true, data: fixtureMap[type], source: 'fixtures', isPlaceholder: true });
+    return NextResponse.json({ ok: false, error: 'Cosmos DB is unavailable. No changes were saved.' }, { status: 503 });
   }
 }
 
@@ -71,11 +74,23 @@ export async function POST(
     );
   }
 
-  const body = await request.json();
-  const created = normalizePayload(type, body);
+  const body = await request.json().catch(() => null);
+  const schema = contentSchemas[type as ContentType];
+  const parsed = schema?.safeParse(body);
+  if (schema && !parsed?.success) {
+    return NextResponse.json({ ok: false, error: parsed?.error?.issues[0]?.message ?? 'Invalid content' }, { status: 400 });
+  }
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return NextResponse.json({ ok: false, error: 'Invalid content' }, { status: 400 });
+  }
+  const created = normalizePayload(type, parsed?.success ? parsed.data : body);
 
   try {
-    const data = await DataService.createItem(type as any, created);
+    const existing = await DataService.listItems(type);
+    if (existing.some((item) => item.id === created.id || (created.slug && item.slug === created.slug))) {
+      return NextResponse.json({ ok: false, error: 'An item with this slug or ID already exists.' }, { status: 409 });
+    }
+    const data = await DataService.createItem(type, created);
     return NextResponse.json({ ok: true, data });
   } catch {
     return NextResponse.json(

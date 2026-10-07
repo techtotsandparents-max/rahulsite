@@ -6,6 +6,20 @@ import { ArrowLeft, MapPin, Briefcase, Plane, Camera, Coffee } from 'lucide-reac
 import { GithubIcon, YoutubeIcon, LinkedinIcon, TwitterIcon, InstagramIcon } from '@/components/icons/SocialIcons';
 import Navbar from '@/components/navigation/Navbar';
 import SunsetFooter from '@/components/footer/SunsetFooter';
+import { useContent } from '@/components/admin/useContent';
+import ContentTools from '@/components/admin/ContentTools';
+import ContentBody from '@/components/sections/ContentBody';
+
+const initialProfile = {
+  title: 'Rahul Tripathi',
+  subtitle: 'Cloud Architect • Builder • Traveller • Creator',
+  content: 'I build technology, explore the world, and share what I learn. As a Cloud Architect, I design and implement scalable cloud-native solutions on Azure, working with Terraform, Kubernetes, and modern distributed systems.\n\nThrough my blog and YouTube channel, I share in-depth tutorials on cloud architecture, AI/ML concepts, and system design patterns — inspired by the teaching style of Andrej Karpathy.\n\nWhen I’m not architecting cloud solutions, I’m exploring new destinations, documenting my travels, and finding the best remote work spots around the globe.',
+  githubUrl: 'https://github.com/rahultripathi',
+  youtubeUrl: 'https://youtube.com/@rahultripathi',
+  linkedinUrl: 'https://linkedin.com/in/rahultripathi',
+  twitterUrl: 'https://x.com/rahultripathi',
+  instagramUrl: 'https://instagram.com/rahultripathi',
+};
 
 const timeline = [
   { icon: Briefcase, title: 'Cloud Architect', desc: 'Designing scalable cloud-native solutions on Azure', color: '#6958FF' },
@@ -13,15 +27,16 @@ const timeline = [
   { icon: Plane, title: 'Traveller', desc: 'Exploring the world while working remotely', color: '#00C9A7' },
 ];
 
-const socialIcons = [
-  { name: 'GitHub', Icon: GithubIcon, url: 'https://github.com/rahultripathi' },
-  { name: 'YouTube', Icon: YoutubeIcon, url: 'https://youtube.com/@rahultripathi' },
-  { name: 'LinkedIn', Icon: LinkedinIcon, url: 'https://linkedin.com/in/rahultripathi' },
-  { name: 'X', Icon: TwitterIcon, url: 'https://x.com/rahultripathi' },
-  { name: 'Instagram', Icon: InstagramIcon, url: 'https://instagram.com/rahultripathi' },
-];
-
 export default function AboutPage() {
+  const content = useContent('about', [initialProfile]);
+  const profile = content.items[0] || initialProfile;
+  const socialIcons = [
+    { name: 'GitHub', Icon: GithubIcon, url: profile.githubUrl },
+    { name: 'YouTube', Icon: YoutubeIcon, url: profile.youtubeUrl },
+    { name: 'LinkedIn', Icon: LinkedinIcon, url: profile.linkedinUrl },
+    { name: 'X', Icon: TwitterIcon, url: profile.twitterUrl },
+    { name: 'Instagram', Icon: InstagramIcon, url: profile.instagramUrl },
+  ].filter((social) => social.url);
   return (
     <>
       <Navbar />
@@ -40,6 +55,8 @@ export default function AboutPage() {
             <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 700, marginBottom: '8px' }}>
               About
             </h1>
+            <ContentTools type="about" item={profile} source={content.source} onChanged={content.reload} />
+            {content.error && <p role="alert">{content.error}</p>}
 
             {/* Bio */}
             <div className="glass-card" style={{ padding: '32px', marginTop: '32px', marginBottom: '32px' }}>
@@ -50,27 +67,19 @@ export default function AboutPage() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '2rem', flexShrink: 0,
                 }}>
-                  👨‍💻
+                  {content.items[0]?.coverImage ? <img src={content.items[0].coverImage} alt={profile.title} style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 20 }} /> : '👨‍💻'}
                 </div>
                 <div>
                   <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700 }}>
-                    Rahul Tripathi
+                    {profile.title}
                   </h2>
                   <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <MapPin size={14} /> Cloud Architect • Builder • Traveller • Creator
+                    <MapPin size={14} /> {profile.subtitle}
                   </p>
                 </div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: 1.8 }}>
-                <p>
-                  I build technology, explore the world, and share what I learn. As a Cloud Architect, I design and implement scalable cloud-native solutions on Azure, working with Terraform, Kubernetes, and modern distributed systems.
-                </p>
-                <p>
-                  Through my blog and YouTube channel, I share in-depth tutorials on cloud architecture, AI/ML concepts, and system design patterns — inspired by the teaching style of Andrej Karpathy.
-                </p>
-                <p>
-                  When I&apos;m not architecting cloud solutions, I&apos;m exploring new destinations, documenting my travels, and finding the best remote work spots around the globe.
-                </p>
+                <ContentBody content={profile.content} photos={content.items[0]?.photos} videos={content.items[0]?.videos} />
               </div>
             </div>
 

@@ -9,14 +9,14 @@ interface AdminLoginPageProps {
 export default async function AdminLoginPage({ searchParams }: AdminLoginPageProps) {
   const session = await getAdminSession();
   if (session?.user?.isAdmin) {
-    redirect('/admin/dashboard');
+    redirect('/blog');
   }
 
   const params = await searchParams;
   const callbackParam = params.callbackUrl;
-  const callbackUrl = typeof callbackParam === 'string' && /^\/admin\/[a-z0-9/-]+$/i.test(callbackParam)
+  const callbackUrl = typeof callbackParam === 'string' && /^\/(blog|travel|adventure|projects|about|youtube)(\/[a-z0-9-]+)?$/i.test(callbackParam)
     ? callbackParam
-    : '/admin/dashboard';
+    : '/blog';
   // Only show access-denied error when it's a real OAuth rejection (not an undefined stale redirect).
   const errorParam = Array.isArray(params.error) ? params.error[0] : params.error;
   const hasAccessError = errorParam === 'AccessDenied' || Boolean(session && !session.user?.isAdmin);

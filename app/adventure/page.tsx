@@ -8,6 +8,9 @@ import { MapPin, Calendar, Plane, ArrowRight, Globe, Camera, Sparkles, Clock } f
 import Navbar from '@/components/navigation/Navbar';
 import SunsetFooter from '@/components/footer/SunsetFooter';
 import { adventureFixtures, AdventureEntry } from '@/lib/fixtures';
+import { useContent } from '@/components/admin/useContent';
+import ContentTools from '@/components/admin/ContentTools';
+import type { ContentRecord } from '@/lib/content';
 
 const FILTERS = ['All', 'Current', 'Remote Work', 'Solo', 'Leisure'] as const;
 type Filter = typeof FILTERS[number];
@@ -27,7 +30,7 @@ function styleLabel(style: AdventureEntry['travelStyle']) {
 }
 
 // ─── Adventure Card ───────────────────────────────────────────────────
-function AdventureCard({ entry, index }: { entry: AdventureEntry; index: number }) {
+function AdventureCard({ entry, index, source, onChanged }: { entry: AdventureEntry & ContentRecord; index: number; source: string; onChanged: () => void }) {
   const style = styleLabel(entry.travelStyle);
 
   return (
@@ -38,7 +41,7 @@ function AdventureCard({ entry, index }: { entry: AdventureEntry; index: number 
       transition={{ duration: 0.45, delay: index * 0.08 }}
       className="adv-card"
     >
-      <Link href={`/adventure/${entry.slug}`} className="adv-card__link">
+      <Link href={`/travel/${entry.slug}`} className="adv-card__link">
         {/* Cover image */}
         <div className="adv-card__cover" style={{ height: '260px', maxHeight: '260px', overflow: 'hidden' }}>
           <img
@@ -70,6 +73,7 @@ function AdventureCard({ entry, index }: { entry: AdventureEntry; index: number 
               alt={`At ${entry.destination}`}
               width={60}
               height={60}
+              unoptimized
               className="adv-card__profile-img"
               style={{ width: '60px', height: '60px' }}
             />
@@ -108,6 +112,10 @@ function AdventureCard({ entry, index }: { entry: AdventureEntry; index: number 
           </div>
         </div>
       </Link>
+      <div style={{ padding: '0 20px' }}>
+        {entry.isPublished === false && <small>Draft</small>}
+        <ContentTools type="adventures" item={entry} source={source} onChanged={onChanged} />
+      </div>
     </motion.article>
   );
 }
@@ -115,9 +123,10 @@ function AdventureCard({ entry, index }: { entry: AdventureEntry; index: number 
 // ─── Main Page ────────────────────────────────────────────────────────
 export default function AdventurePage() {
   const [filter, setFilter] = useState<Filter>('All');
-  const currentAdventure = adventureFixtures.find((a) => a.isCurrent);
+  const content = useContent('adventures', adventureFixtures);
+  const currentAdventure = content.items.find((a) => a.isCurrent);
 
-  const filtered = adventureFixtures.filter((a) => {
+  const filtered = content.items.filter((a) => {
     if (filter === 'All') return true;
     if (filter === 'Current') return a.isCurrent;
     if (filter === 'Remote Work') return a.travelStyle === 'remote-work';
@@ -126,7 +135,7 @@ export default function AdventurePage() {
     return true;
   });
 
-  const countriesVisited = new Set(adventureFixtures.map((a) => a.country)).size;
+  const countriesVisited = new Set(content.items.map((a) => a.country)).size;
 
   return (
     <>
@@ -170,11 +179,11 @@ export default function AdventurePage() {
                 </div>
                 <div className="adv-hero__stat">
                   <Plane size={18} />
-                  <span><strong>{adventureFixtures.length}</strong> Adventures</span>
+                  <span><strong>{content.items.length}</strong> Adventures</span>
                 </div>
                 <div className="adv-hero__stat">
                   <Camera size={18} />
-                  <span><strong>{adventureFixtures.reduce((acc, a) => acc + a.photos.length, 0)}</strong> Photos</span>
+                  <span><strong>{content.items.reduce((acc, a) => acc + a.photos.length, 0)}</strong> Photos</span>
                 </div>
               </div>
             </motion.div>
@@ -202,7 +211,7 @@ export default function AdventurePage() {
                   <Clock size={12} />
                   Since {formatDate(currentAdventure.visitedAt)}
                 </div>
-                <Link href={`/adventure/${currentAdventure.slug}`} className="adv-hero__current-cta">
+                <Link href={`/travel/${currentAdventure.slug}`} className="adv-hero__current-cta">
                   View Adventure <ArrowRight size={14} />
                 </Link>
               </motion.div>
@@ -213,6 +222,8 @@ export default function AdventurePage() {
         {/* ── Filter Tabs + Grid ──────────────────── */}
         <section className="adv-section">
           <div className="container-site">
+            <ContentTools type="adventures" source={content.source} onChanged={content.reload} importItems={content.items.length === 0 ? adventureFixtures : undefined} />
+            {content.error && <p role="alert">{content.error}</p>}
 
             {/* Filter tabs */}
             <div className="adv-filters">
@@ -232,7 +243,7 @@ export default function AdventurePage() {
             <div className="adv-grid">
               <AnimatePresence mode="popLayout">
                 {filtered.map((entry, i) => (
-                  <AdventureCard key={entry.slug} entry={entry} index={i} />
+                  <AdventureCard key={entry.slug} entry={entry} index={i} source={content.source} onChanged={content.reload} />
                 ))}
               </AnimatePresence>
             </div>

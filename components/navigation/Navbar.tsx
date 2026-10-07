@@ -120,7 +120,7 @@ export function TopNavToolbar() {
         </button>
       ) : (
         <a
-          href="/.auth/login/aad?post_login_redirect_uri=%2Fadmin%2Fdashboard"
+          href="/.auth/login/aad?post_login_redirect_uri=%2Fblog"
           className="nav-icon-btn nav-icon-btn--admin"
           aria-label="Admin login"
           title="Admin Login"
