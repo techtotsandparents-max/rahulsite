@@ -71,17 +71,15 @@ export default function AdminLoginCard({
               <Mail size={16} /> Continue with Google
             </button>
           )}
-          {providerAvailability.azureAd && (
-            <button
-              type="button"
-              className="al-btn al-btn--microsoft"
-              onClick={() => {
-                window.location.href = `/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(callbackUrl)}`;
-              }}
-            >
-              <Briefcase size={16} /> Continue with Outlook
-            </button>
-          )}
+          <button
+            type="button"
+            className="al-btn al-btn--microsoft"
+            onClick={() => {
+              window.location.href = `/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(callbackUrl)}`;
+            }}
+          >
+            <Briefcase size={16} /> Continue with Outlook
+          </button>
           
           {providerAvailability.credentials && (
             <form onSubmit={handleCredentialsLogin} className="credentials-form">
