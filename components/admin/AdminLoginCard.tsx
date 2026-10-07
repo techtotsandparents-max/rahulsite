@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type MouseEvent } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Loader2 } from 'lucide-react';
@@ -25,8 +25,14 @@ export default function AdminLoginCard({
   const { data: session } = useSession();
   const authUser = session?.user;
 
-  const handleLogin = async () => {
-    if (loading || !providerAvailability.azureAd) return;
+  const signInUrl = `/api/auth/signin/azure-ad?callbackUrl=${encodeURIComponent(callbackUrl)}`;
+
+  const handleLogin = async (event: MouseEvent<HTMLAnchorElement>) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+    if (!providerAvailability.azureAd) return;
+
+    event.preventDefault();
+    if (loading) return;
 
     setLoading(true);
     setLoginError(null);
@@ -49,7 +55,7 @@ export default function AdminLoginCard({
       <div className="admin-login-bg" aria-hidden />
 
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="admin-login-card"
@@ -88,11 +94,12 @@ export default function AdminLoginCard({
 
         {/* Actions row: Sign In button + status */}
         <div className="admin-login-actions">
-          <button
+          <a
             id="btn-entra-login"
             className="admin-login-btn"
+            href={signInUrl}
             onClick={handleLogin}
-            disabled={loading || !providerAvailability.azureAd}
+            aria-busy={loading}
             aria-label="Sign in with Microsoft Entra ID"
           >
             {loading ? (
@@ -101,7 +108,7 @@ export default function AdminLoginCard({
               <MicrosoftIcon />
             )}
             <span>{loading ? 'Redirecting…' : 'Sign in with Microsoft Entra ID'}</span>
-          </button>
+          </a>
 
           <span className="admin-login-status">
             {authUser ? (
@@ -222,25 +229,26 @@ export default function AdminLoginCard({
           font-size: 0.88rem;
           font-weight: 600;
           font-family: inherit;
+          text-decoration: none;
           cursor: pointer;
           transition: all 0.2s ease;
           white-space: nowrap;
           box-shadow: 0 2px 12px rgba(0, 120, 212, 0.3);
         }
 
-        .admin-login-btn:hover:not(:disabled) {
+        .admin-login-btn:hover {
           background: linear-gradient(135deg, #0068bd 0%, #0094db 100%);
           box-shadow: 0 4px 20px rgba(0, 120, 212, 0.45);
           transform: translateY(-1px);
         }
 
-        .admin-login-btn:active:not(:disabled) {
+        .admin-login-btn:active {
           transform: translateY(0);
         }
 
-        .admin-login-btn:disabled {
+        .admin-login-btn[aria-busy='true'] {
           opacity: 0.7;
-          cursor: not-allowed;
+          cursor: progress;
         }
 
         /* ── Spinner ── */

@@ -3,4 +3,9 @@ import { authOptions } from '@/lib/auth';
 
 const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST };
+const signInHandler = NextAuth({
+	...authOptions,
+	pages: { ...authOptions.pages, signIn: undefined },
+});
+
+export { signInHandler as GET, handler as POST };
