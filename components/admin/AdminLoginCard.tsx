@@ -75,7 +75,10 @@ export default function AdminLoginCard({
             <button
               type="button"
               className="al-btn al-btn--microsoft"
-              onClick={() => signIn('azure-ad', { callbackUrl })}
+              onClick={() => {
+                // Route directly to Azure Easy Auth and redirect back to the callbackUrl
+                window.location.href = `/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(callbackUrl)}`;
+              }}
             >
               <Briefcase size={16} /> Continue with Outlook
             </button>
