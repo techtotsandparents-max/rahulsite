@@ -71,15 +71,13 @@ export default function AdminLoginCard({
               <Mail size={16} /> Continue with Google
             </button>
           )}
-          <button
-            type="button"
+          <a
+            href={`/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(callbackUrl)}`}
             className="al-btn al-btn--microsoft"
-            onClick={() => {
-              window.location.href = `/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(callbackUrl)}`;
-            }}
+            style={{ textDecoration: 'none' }}
           >
             <Briefcase size={16} /> Continue with Outlook
-          </button>
+          </a>
           
           {providerAvailability.credentials && (
             <form onSubmit={handleCredentialsLogin} className="credentials-form">
