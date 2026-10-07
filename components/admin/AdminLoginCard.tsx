@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { signIn, useSession } from 'next-auth/react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Loader2 } from 'lucide-react';
 
@@ -17,45 +18,29 @@ interface AdminLoginCardProps {
 export default function AdminLoginCard({
   callbackUrl,
   hasAccessError,
+  providerAvailability,
 }: AdminLoginCardProps) {
   const [loading, setLoading] = useState(false);
-  const [authUser, setAuthUser] = useState<{ userDetails?: string } | null>(null);
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const { data: session } = useSession();
+  const authUser = session?.user;
 
-  // Check if already authenticated via Easy Auth
-  useEffect(() => {
-    async function checkAuth() {
-      try {
-        const res = await fetch('/.auth/me');
-        if (res.ok) {
-          const data = await res.json();
-          const user = Array.isArray(data) ? data[0] : data?.clientPrincipal;
-          if (user) setAuthUser(user);
-        }
-      } catch {
-        // Not on Azure or not authenticated — expected locally
-      }
-    }
-    checkAuth();
-  }, []);
+  const handleLogin = async () => {
+    if (loading || !providerAvailability.azureAd) return;
 
-  // Determine environment
-  const isAzureDeployed = typeof window !== 'undefined' && !window.location.hostname.includes('localhost');
-
-  const handleLogin = () => {
     setLoading(true);
-    if (isAzureDeployed) {
-      // Azure Easy Auth (App Service production)
-      window.location.href = `/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(callbackUrl)}`;
-    } else {
-      // Local development (NextAuth)
-      import('next-auth/react').then(({ signIn }) => {
-        signIn('azure-ad', { callbackUrl });
-      });
+    setLoginError(null);
+    try {
+      await signIn('azure-ad', { callbackUrl });
+    } catch {
+      setLoginError('Unable to start Microsoft sign-in. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const authStatus = authUser
-    ? `Signed in as ${authUser.userDetails || 'authenticated user'}`
+    ? `Signed in as ${authUser.email || authUser.name || 'authenticated user'}`
     : 'Not signed in';
 
   return (
@@ -93,13 +78,21 @@ export default function AdminLoginCard({
           </div>
         )}
 
+        {(!providerAvailability.azureAd || loginError) && (
+          <div className="admin-login-error" role="alert">
+            {!providerAvailability.azureAd
+              ? 'Microsoft Entra ID sign-in is not configured. Please check the server authentication settings.'
+              : loginError}
+          </div>
+        )}
+
         {/* Actions row: Sign In button + status */}
         <div className="admin-login-actions">
           <button
             id="btn-entra-login"
             className="admin-login-btn"
             onClick={handleLogin}
-            disabled={loading}
+            disabled={loading || !providerAvailability.azureAd}
             aria-label="Sign in with Microsoft Entra ID"
           >
             {loading ? (
