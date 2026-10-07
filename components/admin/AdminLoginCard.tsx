@@ -2,7 +2,8 @@
 
 import { signIn } from 'next-auth/react';
 import { motion } from 'framer-motion';
-import { Mail, ShieldCheck, Briefcase } from 'lucide-react';
+import { Mail, ShieldCheck, Briefcase, Key } from 'lucide-react';
+import { useState, FormEvent } from 'react';
 
 interface AdminLoginCardProps {
   callbackUrl: string;
@@ -10,6 +11,7 @@ interface AdminLoginCardProps {
   providerAvailability: {
     google: boolean;
     azureAd: boolean;
+    credentials?: boolean;
   };
 }
 
@@ -18,7 +20,29 @@ export default function AdminLoginCard({
   hasAccessError,
   providerAvailability,
 }: AdminLoginCardProps) {
-  const hasAnyProvider = providerAvailability.google || providerAvailability.azureAd;
+  const hasAnyProvider = providerAvailability.google || providerAvailability.azureAd || providerAvailability.credentials;
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleCredentialsLogin = async (e: FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    
+    const result = await signIn('credentials', {
+      redirect: true,
+      email,
+      password,
+      callbackUrl,
+    });
+    
+    if (result?.error) {
+      setError('Invalid email or password');
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="al-page">
@@ -34,8 +58,8 @@ export default function AdminLoginCard({
           <ShieldCheck size={22} />
         </div>
 
-        <h1 className="al-title">Admin SSO Access</h1>
-        <p className="al-subtitle">Sign in with an approved Gmail or Outlook account.</p>
+        <h1 className="al-title">Admin Access</h1>
+        <p className="al-subtitle">Sign in to manage the platform.</p>
 
         <div className="al-actions">
           {providerAvailability.google && (
@@ -56,17 +80,47 @@ export default function AdminLoginCard({
               <Briefcase size={16} /> Continue with Outlook
             </button>
           )}
+          
+          {providerAvailability.credentials && (
+            <form onSubmit={handleCredentialsLogin} className="credentials-form">
+              <div className="divider"><span>OR USE EMAIL</span></div>
+              <input 
+                type="email" 
+                placeholder="Admin Email" 
+                className="al-input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <input 
+                type="password" 
+                placeholder="Password" 
+                className="al-input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="submit"
+                className="al-btn al-btn--credentials"
+                disabled={loading}
+              >
+                <Key size={16} /> {loading ? 'Signing in...' : 'Sign In'}
+              </button>
+              {error && <p className="al-error">{error}</p>}
+            </form>
+          )}
         </div>
 
         {!hasAnyProvider && (
-          <p className="al-error">Admin sign-in is not configured yet. Add OAuth app settings to enable access.</p>
+          <p className="al-error">Admin sign-in is not configured yet. Add OAuth or Credentials app settings to enable access.</p>
         )}
 
         {hasAccessError && (
           <p className="al-error">This account is not whitelisted in ADMIN_EMAILS.</p>
         )}
 
-        <p className="al-hint">RBAC enforced via NextAuth session and admin email whitelist.</p>
+        <p className="al-hint">Access restricted to authorized personnel.</p>
       </motion.div>
 
       <style jsx>{`
@@ -169,6 +223,60 @@ export default function AdminLoginCard({
           font-size: 0.72rem;
           color: rgba(160, 168, 192, 0.6);
           text-align: center;
+        }
+
+        .credentials-form {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          width: 100%;
+          margin-top: 10px;
+        }
+
+        .divider {
+          display: flex;
+          align-items: center;
+          text-align: center;
+          color: rgba(160, 168, 192, 0.5);
+          font-size: 0.7rem;
+          font-weight: 600;
+          letter-spacing: 1px;
+          margin: 10px 0;
+        }
+
+        .divider::before, .divider::after {
+          content: '';
+          flex: 1;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .divider span {
+          padding: 0 10px;
+        }
+
+        .al-input {
+          background: rgba(0, 0, 0, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 10px;
+          padding: 12px 14px;
+          color: white;
+          font-size: 0.9rem;
+          outline: none;
+          transition: border-color 0.2s;
+        }
+
+        .al-input:focus {
+          border-color: rgba(105, 88, 255, 0.8);
+        }
+
+        .al-btn--credentials {
+          background: linear-gradient(135deg, #6958ff, #8b7aff);
+          border: none;
+          margin-top: 4px;
+        }
+
+        .al-btn--credentials:hover {
+          opacity: 0.9;
         }
       `}</style>
     </div>

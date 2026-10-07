@@ -1,6 +1,7 @@
 import { type NextAuthOptions, getServerSession } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import AzureADProvider from 'next-auth/providers/azure-ad';
+import CredentialsProvider from 'next-auth/providers/credentials';
 
 const adminEmails = (process.env.ADMIN_EMAILS ?? '')
   .split(',')
@@ -12,13 +13,15 @@ const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET ?? '';
 const azureAdClientId = process.env.AZURE_AD_CLIENT_ID ?? '';
 const azureAdClientSecret = process.env.AZURE_AD_CLIENT_SECRET ?? '';
 const azureAdTenantId = process.env.AZURE_AD_TENANT_ID ?? 'common';
+const adminPassword = process.env.ADMIN_PASSWORD ?? '';
 
 export const authProviderAvailability = {
   google: Boolean(googleClientId && googleClientSecret),
   azureAd: Boolean(azureAdClientId && azureAdClientSecret),
+  credentials: Boolean(adminPassword && adminEmails.length > 0),
 };
 
-const providers = [];
+const providers: any[] = [];
 
 if (authProviderAvailability.google) {
   providers.push(
@@ -39,6 +42,35 @@ if (authProviderAvailability.azureAd) {
   );
 }
 
+if (authProviderAvailability.credentials) {
+  providers.push(
+    CredentialsProvider({
+      name: 'Admin Credentials',
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
+        
+        const inputEmail = credentials.email.toLowerCase().trim();
+        
+        if (adminEmails.includes(inputEmail) && credentials.password === adminPassword) {
+          return {
+            id: inputEmail,
+            email: inputEmail,
+            name: "Admin User",
+          };
+        }
+        
+        return null;
+      }
+    })
+  );
+}
+
 export const authOptions: NextAuthOptions = {
   providers,
   pages: {
@@ -49,7 +81,10 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user, account }) {
+      if (account?.provider === 'credentials') {
+        return true; 
+      }
       const userEmail = user.email?.toLowerCase() ?? '';
       return adminEmails.includes(userEmail);
     },
