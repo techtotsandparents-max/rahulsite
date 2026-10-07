@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Coffee, Sun, Moon, Search, Volume2, Rss, ShieldCheck, LogOut } from 'lucide-react';
+import { Menu, X, Coffee, Sun, Moon, Search, Volume2, Rss, ShieldCheck, LogOut, User } from 'lucide-react';
 import { navLinks } from '@/lib/fixtures';
 
 export function TopNavToolbar() {
@@ -14,6 +14,34 @@ export function TopNavToolbar() {
   const [muted, setMuted] = useState(false);
   const { data: session } = useSession();
   const isAdminSession = Boolean(session?.user?.isAdmin);
+  const [authUser, setAuthUser] = useState<any>(null);
+
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch('/.auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          const user = Array.isArray(data) ? data[0] : data?.clientPrincipal;
+          if (user) {
+            setAuthUser(user);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch auth user', err);
+      }
+    }
+    fetchUser();
+  }, []);
+
+  const handleUserLogin = () => {
+    const redirect = window.location.pathname;
+    window.location.href = '/.auth/login/aad?post_login_redirect_uri=' + encodeURIComponent(redirect);
+  };
+
+  const handleUserLogout = () => {
+    window.location.href = '/.auth/logout?post_logout_redirect_uri=' + encodeURIComponent(window.location.origin);
+  };
 
   useEffect(() => {
     const savedTheme = (localStorage.getItem('site-theme') as 'dark' | 'light') || 'dark';
@@ -56,6 +84,26 @@ export function TopNavToolbar() {
       <a href="/rss.xml" className="nav-icon-btn" aria-label="RSS Feed" title="RSS Feed">
         <Rss size={16} />
       </a>
+
+      {authUser ? (
+        <button
+          onClick={handleUserLogout}
+          className="nav-icon-btn nav-icon-btn--user"
+          aria-label="Sign out User"
+          title={`Sign out ${authUser.userDetails || 'User'}`}
+        >
+          <LogOut size={16} />
+        </button>
+      ) : (
+        <button
+          onClick={handleUserLogin}
+          className="nav-icon-btn nav-icon-btn--user"
+          aria-label="User login"
+          title="User Login"
+        >
+          <User size={16} />
+        </button>
+      )}
 
       {isAdminSession ? (
         <button
@@ -119,6 +167,11 @@ export function TopNavToolbar() {
         .nav-icon-btn--admin {
           border-color: rgba(16, 185, 129, 0.36);
           color: #34d399;
+        }
+
+        .nav-icon-btn--user {
+          border-color: rgba(59, 130, 246, 0.36);
+          color: #60a5fa;
         }
       `}</style>
     </div>
