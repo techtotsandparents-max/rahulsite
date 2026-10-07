@@ -1,9 +1,8 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, ShieldCheck, Briefcase, Key } from 'lucide-react';
-import { useState, FormEvent } from 'react';
+import { ShieldCheck, Loader2 } from 'lucide-react';
 
 interface AdminLoginCardProps {
   callbackUrl: string;
@@ -18,265 +17,293 @@ interface AdminLoginCardProps {
 export default function AdminLoginCard({
   callbackUrl,
   hasAccessError,
-  providerAvailability,
 }: AdminLoginCardProps) {
-  const hasAnyProvider = providerAvailability.google || providerAvailability.azureAd || providerAvailability.credentials;
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [authUser, setAuthUser] = useState<{ userDetails?: string } | null>(null);
 
-  const handleCredentialsLogin = async (e: FormEvent) => {
-    e.preventDefault();
+  // Check if already authenticated via Easy Auth
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const res = await fetch('/.auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          const user = Array.isArray(data) ? data[0] : data?.clientPrincipal;
+          if (user) setAuthUser(user);
+        }
+      } catch {
+        // Not on Azure or not authenticated — expected locally
+      }
+    }
+    checkAuth();
+  }, []);
+
+  // Determine environment
+  const isAzureDeployed = typeof window !== 'undefined' && !window.location.hostname.includes('localhost');
+
+  const handleLogin = () => {
     setLoading(true);
-    setError('');
-    
-    const result = await signIn('credentials', {
-      redirect: true,
-      email,
-      password,
-      callbackUrl,
-    });
-    
-    if (result?.error) {
-      setError('Invalid email or password');
-      setLoading(false);
+    if (isAzureDeployed) {
+      // Azure Easy Auth (App Service production)
+      window.location.href = `/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(callbackUrl)}`;
+    } else {
+      // Local development (NextAuth)
+      import('next-auth/react').then(({ signIn }) => {
+        signIn('azure-ad', { callbackUrl });
+      });
     }
   };
 
+  const authStatus = authUser
+    ? `Signed in as ${authUser.userDetails || 'authenticated user'}`
+    : 'Not signed in';
+
   return (
-    <div className="al-page">
-      <div className="al-bg" aria-hidden />
+    <div className="admin-login-page">
+      {/* Background glow */}
+      <div className="admin-login-bg" aria-hidden />
 
       <motion.div
-        initial={{ opacity: 0, y: 24, scale: 0.97 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.55, ease: [0.34, 1.56, 0.64, 1] }}
-        className="al-card"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="admin-login-card"
       >
-        <div className="al-logo">
-          <ShieldCheck size={22} />
+        {/* Entra ID Protected Badge */}
+        <div className="admin-login-badge">
+          <ShieldCheck size={13} />
+          <span>Entra ID Protected</span>
         </div>
 
-        <h1 className="al-title">Admin Access</h1>
-        <p className="al-subtitle">Sign in to manage the platform.</p>
+        {/* Title */}
+        <h1 className="admin-login-title">
+          Sign in to manage your site
+        </h1>
 
-        <div className="al-actions">
-          {providerAvailability.google && (
-            <button
-              type="button"
-              className="al-btn al-btn--google"
-              onClick={() => signIn('google', { callbackUrl })}
-            >
-              <Mail size={16} /> Continue with Google
-            </button>
-          )}
-          <a
-            href={`/.auth/login/aad?post_login_redirect_uri=${encodeURIComponent(callbackUrl)}`}
-            className="al-btn al-btn--microsoft"
-            style={{ textDecoration: 'none' }}
-          >
-            <Briefcase size={16} /> Continue with Outlook
-          </a>
-          
-          {providerAvailability.credentials && (
-            <form onSubmit={handleCredentialsLogin} className="credentials-form">
-              <div className="divider"><span>OR USE EMAIL</span></div>
-              <input 
-                type="email" 
-                placeholder="Admin Email" 
-                className="al-input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <input 
-                type="password" 
-                placeholder="Password" 
-                className="al-input"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <button
-                type="submit"
-                className="al-btn al-btn--credentials"
-                disabled={loading}
-              >
-                <Key size={16} /> {loading ? 'Signing in...' : 'Sign In'}
-              </button>
-              {error && <p className="al-error">{error}</p>}
-            </form>
-          )}
-        </div>
+        {/* Description */}
+        <p className="admin-login-desc">
+          Sign in to manage blogs, travel journals, YouTube videos, projects, and site settings.
+          Access is enforced by Microsoft Entra ID.
+        </p>
 
-        {!hasAnyProvider && (
-          <p className="al-error">Admin sign-in is not configured yet. Add OAuth or Credentials app settings to enable access.</p>
-        )}
-
+        {/* Access denied error */}
         {hasAccessError && (
-          <p className="al-error">This account is not whitelisted in ADMIN_EMAILS.</p>
+          <div className="admin-login-error">
+            Access denied — your account is not in the admin whitelist.
+          </div>
         )}
 
-        <p className="al-hint">Access restricted to authorized personnel.</p>
+        {/* Actions row: Sign In button + status */}
+        <div className="admin-login-actions">
+          <button
+            id="btn-entra-login"
+            className="admin-login-btn"
+            onClick={handleLogin}
+            disabled={loading}
+            aria-label="Sign in with Microsoft Entra ID"
+          >
+            {loading ? (
+              <Loader2 size={16} className="admin-login-spinner" />
+            ) : (
+              <MicrosoftIcon />
+            )}
+            <span>{loading ? 'Redirecting…' : 'Sign in with Microsoft Entra ID'}</span>
+          </button>
+
+          <span className="admin-login-status">
+            {authUser ? (
+              <span className="admin-login-status--active">{authStatus}</span>
+            ) : (
+              authStatus
+            )}
+          </span>
+        </div>
       </motion.div>
 
       <style jsx>{`
-        .al-page {
+        .admin-login-page {
           min-height: 100vh;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #060d1f;
+          background: var(--bg-primary, #060d1f);
           position: relative;
           overflow: hidden;
           padding: 24px;
+          font-family: 'Inter', 'Space Grotesk', -apple-system, sans-serif;
         }
 
-        .al-bg {
+        .admin-login-bg {
           position: absolute;
           inset: 0;
           background:
-            radial-gradient(ellipse at 20% 50%, rgba(105, 88, 255, 0.18) 0%, transparent 60%),
-            radial-gradient(ellipse at 80% 30%, rgba(255, 138, 61, 0.1) 0%, transparent 50%),
-            radial-gradient(ellipse at 50% 90%, rgba(6, 182, 212, 0.08) 0%, transparent 50%);
+            radial-gradient(ellipse at 30% 50%, rgba(105, 88, 255, 0.1) 0%, transparent 55%),
+            radial-gradient(ellipse at 70% 30%, rgba(6, 182, 212, 0.06) 0%, transparent 50%);
         }
 
-        .al-card {
+        .admin-login-card {
           position: relative;
           z-index: 1;
           width: 100%;
-          max-width: 450px;
-          background: rgba(13, 27, 62, 0.8);
+          max-width: 540px;
+          background: rgba(10, 18, 42, 0.65);
           backdrop-filter: blur(24px);
-          border: 1px solid rgba(105, 88, 255, 0.25);
-          border-radius: 24px;
-          padding: 42px 38px;
+          -webkit-backdrop-filter: blur(24px);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 16px;
+          padding: 32px 36px;
           display: flex;
           flex-direction: column;
-          align-items: center;
+          align-items: flex-start;
+          gap: 0;
         }
 
-        .al-logo {
-          width: 58px;
-          height: 58px;
-          border-radius: 16px;
-          background: linear-gradient(135deg, #6958ff, #8b7aff);
-          display: flex;
+        /* ── Badge ── */
+        .admin-login-badge {
+          display: inline-flex;
           align-items: center;
-          justify-content: center;
-          color: white;
+          gap: 6px;
+          padding: 5px 14px;
+          border-radius: 100px;
+          border: 1px solid rgba(16, 185, 129, 0.35);
+          background: rgba(16, 185, 129, 0.08);
+          color: #34d399;
+          font-size: 0.72rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          margin-bottom: 20px;
+        }
+
+        /* ── Title ── */
+        .admin-login-title {
+          font-family: 'Space Grotesk', 'Inter', sans-serif;
+          font-size: 1.55rem;
+          font-weight: 700;
+          color: #f0f0f8;
+          margin: 0 0 10px;
+          letter-spacing: -0.02em;
+          line-height: 1.3;
+        }
+
+        /* ── Description ── */
+        .admin-login-desc {
+          color: rgba(160, 168, 200, 0.7);
+          font-size: 0.88rem;
+          line-height: 1.6;
+          margin: 0 0 22px;
+          max-width: 440px;
+        }
+
+        /* ── Error ── */
+        .admin-login-error {
+          width: 100%;
+          color: #fca5a5;
+          background: rgba(248, 113, 113, 0.08);
+          border: 1px solid rgba(248, 113, 113, 0.2);
+          border-radius: 10px;
+          padding: 10px 14px;
+          font-size: 0.82rem;
+          line-height: 1.5;
           margin-bottom: 18px;
         }
 
-        .al-title {
-          font-family: 'Space Grotesk', sans-serif;
-          color: #f0f0f5;
-          font-size: 1.7rem;
-          margin: 0 0 8px;
+        /* ── Actions row ── */
+        .admin-login-actions {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          flex-wrap: wrap;
         }
 
-        .al-subtitle {
-          color: rgba(160, 168, 192, 0.85);
-          text-align: center;
-          margin-bottom: 24px;
-        }
-
-        .al-actions {
-          width: 100%;
-          display: grid;
-          gap: 10px;
-        }
-
-        .al-btn {
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          border-radius: 12px;
-          padding: 12px 14px;
-          background: rgba(6, 13, 31, 0.75);
-          color: white;
-          font-weight: 600;
+        /* ── Sign in button ── */
+        .admin-login-btn {
           display: inline-flex;
-          gap: 8px;
           align-items: center;
-          justify-content: center;
-          cursor: pointer;
-        }
-
-        .al-btn:hover {
-          border-color: rgba(105, 88, 255, 0.5);
-        }
-
-        .al-error {
-          margin-top: 14px;
-          font-size: 0.82rem;
-          color: #f87171;
-          background: rgba(248, 113, 113, 0.12);
-          border: 1px solid rgba(248, 113, 113, 0.28);
-          border-radius: 9px;
-          padding: 8px 12px;
-        }
-
-        .al-hint {
-          margin-top: 18px;
-          font-size: 0.72rem;
-          color: rgba(160, 168, 192, 0.6);
-          text-align: center;
-        }
-
-        .credentials-form {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-          width: 100%;
-          margin-top: 10px;
-        }
-
-        .divider {
-          display: flex;
-          align-items: center;
-          text-align: center;
-          color: rgba(160, 168, 192, 0.5);
-          font-size: 0.7rem;
-          font-weight: 600;
-          letter-spacing: 1px;
-          margin: 10px 0;
-        }
-
-        .divider::before, .divider::after {
-          content: '';
-          flex: 1;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .divider span {
-          padding: 0 10px;
-        }
-
-        .al-input {
-          background: rgba(0, 0, 0, 0.2);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          gap: 9px;
+          padding: 11px 22px;
           border-radius: 10px;
-          padding: 12px 14px;
-          color: white;
-          font-size: 0.9rem;
-          outline: none;
-          transition: border-color 0.2s;
-        }
-
-        .al-input:focus {
-          border-color: rgba(105, 88, 255, 0.8);
-        }
-
-        .al-btn--credentials {
-          background: linear-gradient(135deg, #6958ff, #8b7aff);
           border: none;
-          margin-top: 4px;
+          background: linear-gradient(135deg, #0078d4 0%, #00a4ef 100%);
+          color: white;
+          font-size: 0.88rem;
+          font-weight: 600;
+          font-family: inherit;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          white-space: nowrap;
+          box-shadow: 0 2px 12px rgba(0, 120, 212, 0.3);
         }
 
-        .al-btn--credentials:hover {
-          opacity: 0.9;
+        .admin-login-btn:hover:not(:disabled) {
+          background: linear-gradient(135deg, #0068bd 0%, #0094db 100%);
+          box-shadow: 0 4px 20px rgba(0, 120, 212, 0.45);
+          transform: translateY(-1px);
+        }
+
+        .admin-login-btn:active:not(:disabled) {
+          transform: translateY(0);
+        }
+
+        .admin-login-btn:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+
+        /* ── Spinner ── */
+        .admin-login-spinner {
+          animation: adminSpin 0.8s linear infinite;
+        }
+
+        @keyframes adminSpin {
+          to { transform: rotate(360deg); }
+        }
+
+        /* ── Status text ── */
+        .admin-login-status {
+          font-size: 0.82rem;
+          color: rgba(160, 168, 200, 0.5);
+        }
+
+        .admin-login-status--active {
+          color: #34d399;
+        }
+
+        /* ── Mobile responsive ── */
+        @media (max-width: 520px) {
+          .admin-login-card {
+            padding: 24px 22px;
+            border-radius: 14px;
+          }
+
+          .admin-login-title {
+            font-size: 1.3rem;
+          }
+
+          .admin-login-actions {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+          }
+
+          .admin-login-btn {
+            width: 100%;
+            justify-content: center;
+          }
         }
       `}</style>
     </div>
+  );
+}
+
+/* ── Microsoft icon ── */
+function MicrosoftIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
+      <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
+      <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
+      <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
+    </svg>
   );
 }

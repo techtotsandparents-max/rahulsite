@@ -38,6 +38,11 @@ if (authProviderAvailability.azureAd) {
       clientId: azureAdClientId,
       clientSecret: azureAdClientSecret,
       tenantId: azureAdTenantId,
+      authorization: {
+        params: {
+          scope: 'openid profile email',
+        },
+      },
     })
   );
 }

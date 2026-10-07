@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { usePathname, useRouter } from 'next/navigation';
+import { signOut, useSession } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Coffee, Sun, Moon, Search, Volume2, Rss, ShieldCheck, LogOut, User } from 'lucide-react';
 import { navLinks } from '@/lib/fixtures';
@@ -15,6 +15,7 @@ export function TopNavToolbar() {
   const { data: session } = useSession();
   const isAdminSession = Boolean(session?.user?.isAdmin);
   const [authUser, setAuthUser] = useState<any>(null);
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchUser() {
@@ -110,13 +111,13 @@ export function TopNavToolbar() {
           onClick={() => signOut({ callbackUrl: '/' })}
           className="nav-icon-btn nav-icon-btn--admin"
           aria-label="Sign out admin"
-          title="Sign out"
+          title="Sign out admin"
         >
           <LogOut size={16} />
         </button>
       ) : (
         <button
-          onClick={() => signIn(undefined, { callbackUrl: '/admin/dashboard' })}
+          onClick={() => router.push('/admin')}
           className="nav-icon-btn nav-icon-btn--admin"
           aria-label="Admin login"
           title="Admin Login"

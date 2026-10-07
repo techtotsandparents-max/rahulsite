@@ -15,7 +15,9 @@ export default async function AdminLoginPage({ searchParams }: AdminLoginPagePro
   const params = await searchParams;
   const callbackParam = params.callbackUrl;
   const callbackUrl = typeof callbackParam === 'string' ? callbackParam : '/admin/dashboard';
-  const hasAccessError = params.error === 'AccessDenied';
+  // Only show access-denied error when it's a real OAuth rejection (not an undefined stale redirect).
+  const errorParam = Array.isArray(params.error) ? params.error[0] : params.error;
+  const hasAccessError = errorParam === 'AccessDenied';
 
   return (
     <AdminLoginCard
