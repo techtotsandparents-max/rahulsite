@@ -497,7 +497,7 @@ export default function SunsetFooter() {
                 <GithubIcon size={16} />
               </a>
               <a
-                href="https://linkedin.com/in/rahultripathi"
+                href="https://www.linkedin.com/in/rahul-tripathi-a05a1693"
                 target="_blank" rel="noopener noreferrer"
                 className="gf-tool-icon" aria-label="LinkedIn"
               >

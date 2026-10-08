@@ -16,7 +16,7 @@ const initialProfile = {
   content: 'I build technology, explore the world, and share what I learn. As a Cloud Architect, I design and implement scalable cloud-native solutions on Azure, working with Terraform, Kubernetes, and modern distributed systems.\n\nThrough my blog and YouTube channel, I share in-depth tutorials on cloud architecture, AI/ML concepts, and system design patterns — inspired by the teaching style of Andrej Karpathy.\n\nWhen I’m not architecting cloud solutions, I’m exploring new destinations, documenting my travels, and finding the best remote work spots around the globe.',
   githubUrl: 'https://github.com/rahultripathi',
   youtubeUrl: 'https://youtube.com/@rahultripathi',
-  linkedinUrl: 'https://linkedin.com/in/rahultripathi',
+  linkedinUrl: 'https://www.linkedin.com/in/rahul-tripathi-a05a1693',
   twitterUrl: 'https://x.com/rahultripathi',
   instagramUrl: 'https://instagram.com/rahultripathi',
 };

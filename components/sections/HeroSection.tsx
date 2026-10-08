@@ -13,7 +13,7 @@ import { ParallaxStage } from './ParallaxStage';
 const socialLinks = [
   { name: 'GitHub', Icon: GithubIcon, url: 'https://github.com/rahultripathi' },
   { name: 'YouTube', Icon: YoutubeIcon, url: 'https://youtube.com/@rahultripathi' },
-  { name: 'LinkedIn', Icon: LinkedinIcon, url: 'https://linkedin.com/in/rahultripathi' },
+  { name: 'LinkedIn', Icon: LinkedinIcon, url: 'https://www.linkedin.com/in/rahul-tripathi-a05a1693' },
   { name: 'X / Twitter', Icon: TwitterIcon, url: 'https://x.com/rahultripathi' },
   { name: 'Instagram', Icon: InstagramIcon, url: 'https://instagram.com/rahultripathi' },
 ];
