@@ -32,8 +32,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Next.js application
-        run: npm run build
+      - name: Build production deployment package
+        run: npm run package:deploy
         env:
           NEXT_TELEMETRY_DISABLED: 1
 
@@ -48,4 +48,5 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          package: .
+          package: .next/standalone
+          startup-command: 'node server.js'
