@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "package:deploy": "npm run build && node scripts/package-deploy.mjs",
     "start": "next start",
     "lint": "eslint"
   },

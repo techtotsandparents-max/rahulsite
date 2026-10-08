@@ -24,11 +24,6 @@
 <tr>
 <td valign="top">
 
-<img src="./avi-ascii.svg" width="400" alt="ASCII portrait" />
-
-</td>
-<td valign="top">
-
 ```yaml
 # SYSTEM_INFO
 name:      Rahul Tripathi
