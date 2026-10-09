@@ -334,7 +334,7 @@ export const adventureFixtures: AdventureEntry[] = [
 
 export const videoFixtures: VideoFixture[] = [
   {
-    youtubeId: 'placeholder-1',
+    youtubeId: 'plcehlder-1',
     title: 'Building LLM Applications from Scratch',
     topic: 'Cloud By Design',
     duration: '1:45:30',
@@ -342,7 +342,7 @@ export const videoFixtures: VideoFixture[] = [
     isPlaceholder: true,
   },
   {
-    youtubeId: 'placeholder-2',
+    youtubeId: 'plcehlder-2',
     title: 'System Design: Distributed Caching at Scale',
     topic: 'The Committee Files',
     duration: '52:10',
@@ -350,7 +350,7 @@ export const videoFixtures: VideoFixture[] = [
     isPlaceholder: true,
   },
   {
-    youtubeId: 'placeholder-3',
+    youtubeId: 'plcehlder-3',
     title: 'Deep Dive: Azure Kubernetes Service Architecture',
     topic: 'Money By Design',
     duration: '1:12:45',
@@ -358,7 +358,7 @@ export const videoFixtures: VideoFixture[] = [
     isPlaceholder: true,
   },
   {
-    youtubeId: 'placeholder-4',
+    youtubeId: 'plcehlder-4',
     title: 'Attention Is All You Need — Paper Walkthrough',
     topic: 'Life By Design',
     duration: '2:05:20',
