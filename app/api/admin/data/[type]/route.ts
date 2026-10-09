@@ -46,8 +46,8 @@ export async function GET(
   try {
     const data = await DataService.listItems(type);
     return NextResponse.json({ ok: true, data, source: 'cosmos' });
-  } catch {
-    return NextResponse.json({ ok: false, error: 'Cosmos DB is unavailable. No changes were saved.' }, { status: 503 });
+  } catch (err: any) {
+    return NextResponse.json({ ok: false, error: 'Cosmos DB is unavailable. ' + (err?.message || 'Unknown error') }, { status: 503 });
   }
 }
 
