@@ -46,7 +46,7 @@ export default function YouTubePage() {
               I'm a cloud architect who also runs an apartment society, raises kids, travels and plays cricket — and I show you exactly how I get all of it done..
             </p>
             <YouTubeChannel />
-            <ContentTools type="videos" source={content.source} onChanged={content.reload} importItems={content.items.length === 0 ? videoFixtures : undefined} />
+            <ContentTools type="videos" source={content.source} onChanged={content.reload} importItems={videoFixtures} />
             {content.error && <p role="alert">{content.error}</p>}
 
             {/* Topic Filter */}

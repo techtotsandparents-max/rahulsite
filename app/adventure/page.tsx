@@ -222,7 +222,7 @@ export default function AdventurePage() {
         {/* ── Filter Tabs + Grid ──────────────────── */}
         <section className="adv-section">
           <div className="container-site">
-            <ContentTools type="adventures" source={content.source} onChanged={content.reload} importItems={content.items.length === 0 ? adventureFixtures : undefined} />
+            <ContentTools type="adventures" source={content.source} onChanged={content.reload} importItems={adventureFixtures} />
             {content.error && <p role="alert">{content.error}</p>}
 
             {/* Filter tabs */}

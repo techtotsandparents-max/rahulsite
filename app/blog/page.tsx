@@ -45,7 +45,7 @@ export default function BlogPage() {
             <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 700, marginBottom: '8px' }}>
               Blog
             </h1>
-            <ContentTools type="blogs" source={content.source} onChanged={content.reload} importItems={content.items.length === 0 ? blogFixtures : undefined} />
+            <ContentTools type="blogs" source={content.source} onChanged={content.reload} importItems={blogFixtures} />
             {content.error && <p role="alert">{content.error}</p>}
             <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', marginBottom: '40px', maxWidth: '600px' }}>
               In-depth tutorials on cloud architecture, AI lessons, travel journals, and engineering insights.

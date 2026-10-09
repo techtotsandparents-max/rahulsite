@@ -44,7 +44,7 @@ export default function ProjectsPage() {
             <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 700, marginBottom: '8px' }}>
               Projects
             </h1>
-            <ContentTools type="projects" source={content.source} onChanged={content.reload} importItems={content.items.length === 0 ? projectFixtures : undefined} />
+            <ContentTools type="projects" source={content.source} onChanged={content.reload} importItems={projectFixtures} />
             {content.error && <p role="alert">{content.error}</p>}
             <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', marginBottom: '48px', maxWidth: '600px' }}>
               Open-source projects, architecture patterns, and engineering samples.
