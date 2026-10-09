@@ -92,9 +92,9 @@ export async function POST(
     }
     const data = await DataService.createItem(type, created);
     return NextResponse.json({ ok: true, data });
-  } catch {
+  } catch (err: any) {
     return NextResponse.json(
-      { ok: false, error: 'Database insert failed. Check Cosmos DB connectivity.' },
+      { ok: false, error: 'Database insert failed: ' + (err?.message || 'Unknown error') },
       { status: 500 }
     );
   }
