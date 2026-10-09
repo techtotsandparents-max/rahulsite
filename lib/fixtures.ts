@@ -336,7 +336,7 @@ export const videoFixtures: VideoFixture[] = [
   {
     youtubeId: 'placeholder-1',
     title: 'Building LLM Applications from Scratch',
-    topic: 'LLMs',
+    topic: 'Cloud By Design',
     duration: '1:45:30',
     publishedAt: '2026-07-15',
     isPlaceholder: true,
@@ -344,7 +344,7 @@ export const videoFixtures: VideoFixture[] = [
   {
     youtubeId: 'placeholder-2',
     title: 'System Design: Distributed Caching at Scale',
-    topic: 'System Design',
+    topic: 'The Committee Files',
     duration: '52:10',
     publishedAt: '2026-06-28',
     isPlaceholder: true,
@@ -352,7 +352,7 @@ export const videoFixtures: VideoFixture[] = [
   {
     youtubeId: 'placeholder-3',
     title: 'Deep Dive: Azure Kubernetes Service Architecture',
-    topic: 'Cloud Architecture',
+    topic: 'Money By Design',
     duration: '1:12:45',
     publishedAt: '2026-06-10',
     isPlaceholder: true,
@@ -360,7 +360,7 @@ export const videoFixtures: VideoFixture[] = [
   {
     youtubeId: 'placeholder-4',
     title: 'Attention Is All You Need — Paper Walkthrough',
-    topic: 'Deep Learning',
+    topic: 'Life By Design',
     duration: '2:05:20',
     publishedAt: '2026-05-22',
     isPlaceholder: true,

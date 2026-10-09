@@ -7,10 +7,10 @@ import { videoFixtures } from '@/lib/fixtures';
 import { useContent } from '@/components/admin/useContent';
 
 const topicColors: Record<string, string> = {
-  'LLMs': '#00C9A7',
-  'System Design': '#6958FF',
-  'Cloud Architecture': '#FF8A3D',
-  'Deep Learning': '#FF4488',
+  'Cloud By Design': '#00C9A7',
+  'The Committee Files': '#6958FF',
+  'Money By Design': '#FF8A3D',
+  'Life By Design': '#FF4488',
 };
 
 export default function LatestVideos() {
@@ -26,8 +26,8 @@ export default function LatestVideos() {
           transition={{ duration: 0.5 }}
         >
           <div>
-            <h2 className="videos__title">AI Teaching Hub</h2>
-            <p className="videos__subtitle">Karpathy-style lectures on AI, cloud, and system design</p>
+            <h2 className="videos__title">Balance By Design</h2>
+            <p className="videos__subtitle">I'm a cloud architect who also runs an apartment society, raises kids, travels and plays cricket — and I show you exactly how I get all of it done..</p>
           </div>
           <Link href="/youtube" className="videos__view-all">
             View all <ArrowRight size={16} />

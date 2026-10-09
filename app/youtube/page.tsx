@@ -12,13 +12,13 @@ import ContentTools from '@/components/admin/ContentTools';
 import YouTubeChannel from '@/components/sections/YouTubeChannel';
 
 const topicColors: Record<string, string> = {
-  'LLMs': '#00C9A7',
-  'System Design': '#6958FF',
-  'Cloud Architecture': '#FF8A3D',
-  'Deep Learning': '#FF4488',
+  'Cloud By Design': '#00C9A7',
+  'The Committee Files': '#6958FF',
+  'Money By Design': '#FF8A3D',
+  'Life By Design': '#FF4488',
 };
 
-const topics = ['All', 'LLMs', 'System Design', 'Cloud Architecture', 'Deep Learning'];
+const topics = ['All', 'Cloud By Design', 'The Committee Files', 'Money By Design', 'Life By Design'];
 
 export default function YouTubePage() {
   const content = useContent('videos', videoFixtures);
@@ -40,10 +40,10 @@ export default function YouTubePage() {
             </Link>
 
             <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 700, marginBottom: '8px' }}>
-              AI Teaching Hub
+              Balance By Design
             </h1>
             <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', marginBottom: '32px', maxWidth: '600px' }}>
-              Karpathy-style video lectures on AI, cloud architecture, system design, and deep learning.
+              I'm a cloud architect who also runs an apartment society, raises kids, travels and plays cricket — and I show you exactly how I get all of it done..
             </p>
             <YouTubeChannel />
             <ContentTools type="videos" source={content.source} onChanged={content.reload} importItems={content.items.length === 0 ? videoFixtures : undefined} />
