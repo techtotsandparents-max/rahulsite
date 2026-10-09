@@ -40,10 +40,12 @@ export class DataService {
       return collection.find({}).toArray() as Promise<Record<string, unknown>[]>;
     }
 
-    return collection
-      .find({})
-      .sort({ publishedAt: -1, visitedAt: -1, createdAt: -1 })
-      .toArray() as Promise<Record<string, unknown>[]>;
+    const items = await collection.find({}).toArray();
+    return items.sort((a, b) => {
+      const dateA = new Date((a.publishedAt || a.visitedAt || a.createdAt) as string).getTime();
+      const dateB = new Date((b.publishedAt || b.visitedAt || b.createdAt) as string).getTime();
+      return dateB - dateA;
+    }) as Record<string, unknown>[];
   }
 
   public static async createItem(type: DataType, item: Record<string, unknown>) {
