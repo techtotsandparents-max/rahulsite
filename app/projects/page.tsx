@@ -87,7 +87,7 @@ export default function ProjectsPage() {
                       </span>
                     ))}
                   </div>
-                  <div style={{ display: 'flex', gap: '10px', marginTop: 'auto', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
+                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: 'auto', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
                     {project.githubUrl && (
                       <a
                         href={project.githubUrl}

@@ -1,6 +1,7 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowLeft, Clock, Tag, Calendar, User } from 'lucide-react';
@@ -27,10 +28,17 @@ const categoryLabels: Record<string, string> = {
 
 export default function BlogSlugPage() {
   const params = useParams();
+  const router = useRouter();
   const slug = params?.slug as string;
 
   const content = useContent('blogs', blogFixtures);
   const post = content.items.find((entry) => entry.slug === slug);
+
+  useEffect(() => {
+    if (post?.externalUrl) {
+      window.location.href = post.externalUrl;
+    }
+  }, [post?.externalUrl]);
   if (!post) return <><Navbar /><main id="main-content" className="container-site" style={{ paddingTop: 120, minHeight: '70vh' }}><p>{content.error || (content.loading ? 'Loading article...' : 'Article not found.')}</p><Link href="/blog">Back to articles</Link></main><SunsetFooter /></>;
 
   return (

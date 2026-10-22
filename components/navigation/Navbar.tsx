@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Coffee, Sun, Moon, Search, Volume2, Rss, ShieldCheck, LogOut } from 'lucide-react';
+import { Menu, X, Coffee, Sun, Moon, Search, Volume2, ShieldCheck, LogOut } from 'lucide-react';
 import { navLinks } from '@/lib/fixtures';
 
 export function TopNavToolbar() {
@@ -35,13 +35,13 @@ export function TopNavToolbar() {
 
   return (
     <div className="nav-toolbar-row">
-      <Link href="/blog" className="nav-icon-btn" aria-label="Search">
+      <Link href="/blog" className="nav-icon-btn nav-icon-btn--desktop-only" aria-label="Search">
         <Search size={16} />
       </Link>
 
       <button
         onClick={() => setMuted(!muted)}
-        className="nav-icon-btn"
+        className="nav-icon-btn nav-icon-btn--desktop-only"
         aria-label="Toggle Sound"
         title="Toggle Ambient Sound"
       >
@@ -57,10 +57,6 @@ export function TopNavToolbar() {
       >
         {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
       </button>
-
-      <a href="/rss.xml" className="nav-icon-btn" aria-label="RSS Feed" title="RSS Feed">
-        <Rss size={16} />
-      </a>
 
       {session?.user ? (
         <button
@@ -129,6 +125,12 @@ export function TopNavToolbar() {
         .nav-icon-btn--admin {
           border-color: rgba(16, 185, 129, 0.36);
           color: #34d399;
+        }
+
+        @media (max-width: 640px) {
+          .nav-icon-btn--desktop-only {
+            display: none !important;
+          }
         }
 
       `}</style>

@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Search, Volume2, Rss, Sun, Moon } from 'lucide-react';
+import { ArrowRight, Search, Volume2, Sun, Moon } from 'lucide-react';
 import { GithubIcon, LinkedinIcon, YoutubeIcon, TwitterIcon } from '@/components/icons/SocialIcons';
 
 // ─────────────────────────────────────────────
@@ -453,7 +453,6 @@ export default function SunsetFooter() {
                 <li><Link href="/about">About Me</Link></li>
                 <li><Link href="/projects">Open Source Projects</Link></li>
                 <li><Link href="/contact">Get in Touch</Link></li>
-                <li><Link href="/rss.xml">RSS Feed</Link></li>
               </ul>
             </div>
 
@@ -464,9 +463,9 @@ export default function SunsetFooter() {
             <div className="gf-legal">
               <p>© {new Date().getFullYear()} Rahul Tripathi. All rights reserved.</p>
               <div className="gf-legal-links">
-                <Link href="/contact">Terms</Link>
+                <Link href="/terms">Terms</Link>
                 <span>•</span>
-                <Link href="/contact">Privacy</Link>
+                <Link href="/privacy">Privacy</Link>
               </div>
             </div>
 
@@ -486,11 +485,8 @@ export default function SunsetFooter() {
               >
                 {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
               </button>
-              <a href="/rss.xml" className="gf-tool-icon" aria-label="RSS Feed">
-                <Rss size={16} />
-              </a>
               <a
-                href="https://github.com/rahultripathi"
+                href="https://github.com/techtotsandparents-max"
                 target="_blank" rel="noopener noreferrer"
                 className="gf-tool-icon" aria-label="GitHub"
               >
@@ -818,9 +814,12 @@ export default function SunsetFooter() {
         .gf-legal {
           display: flex;
           align-items: center;
-          gap: 18px;
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 12px 18px;
           font-size: 0.78rem;
           color: var(--text-muted, #64748B);
+          text-align: center;
         }
 
         .gf-legal-links {
@@ -841,6 +840,8 @@ export default function SunsetFooter() {
         .gf-toolbar {
           display: flex;
           align-items: center;
+          justify-content: center;
+          flex-wrap: wrap;
           gap: 8px;
         }
 

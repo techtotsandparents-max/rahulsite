@@ -87,7 +87,12 @@ export default function BlogPage() {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
                 >
-                  <Link href={`/blog/${post.slug}`} style={{ display: 'flex', flexDirection: 'column', textDecoration: 'none', color: 'inherit', flex: 1 }}>
+                  <Link
+                    href={post.externalUrl || `/blog/${post.slug}`}
+                    target={post.externalUrl ? '_blank' : undefined}
+                    rel={post.externalUrl ? 'noopener noreferrer' : undefined}
+                    style={{ display: 'flex', flexDirection: 'column', textDecoration: 'none', color: 'inherit', flex: 1 }}
+                  >
                     <div style={{
                       height: '140px',
                       background: `linear-gradient(135deg, ${categoryColors[post.category]}22, ${categoryColors[post.category]}08)`,

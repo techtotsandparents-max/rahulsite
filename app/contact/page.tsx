@@ -109,7 +109,7 @@ export default function ContactPage() {
                 <Mail size={20} />
               </a>
               <a
-                href="https://github.com/rahultripathi"
+                href="https://github.com/techtotsandparents-max"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="glass-card glass-card-hover"

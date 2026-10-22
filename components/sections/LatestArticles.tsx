@@ -48,7 +48,13 @@ export default function LatestArticles() {
               viewport={{ once: true, margin: '-40px' }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
             >
-              <Link href={`/blog/${post.slug}`} className="article-card__link" id={`article-${post.slug}`}>
+              <Link
+                href={post.externalUrl || `/blog/${post.slug}`}
+                target={post.externalUrl ? '_blank' : undefined}
+                rel={post.externalUrl ? 'noopener noreferrer' : undefined}
+                className="article-card__link"
+                id={`article-${post.slug}`}
+              >
                 <div className="article-card__cover">
                   <div
                     className="article-card__cover-gradient"

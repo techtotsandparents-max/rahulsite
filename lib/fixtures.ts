@@ -440,7 +440,7 @@ export const quickCards = [
 // ============================================================
 
 export const socialLinks = [
-  { name: 'GitHub', url: 'https://github.com/rahultripathi', icon: 'github' },
+  { name: 'GitHub', url: 'https://github.com/techtotsandparents-max', icon: 'github' },
   { name: 'YouTube', url: 'https://youtube.com/@rahultripathi', icon: 'youtube' },
   { name: 'LinkedIn', url: 'https://www.linkedin.com/in/rahul-tripathi-a05a1693', icon: 'linkedin' },
   { name: 'X / Twitter', url: 'https://x.com/rahultripathi', icon: 'twitter' },

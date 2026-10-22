@@ -13,7 +13,7 @@ import { adventureFixtures } from '@/lib/fixtures';
 import { useContent } from '@/components/admin/useContent';
 
 const SOCIAL_LINKS = [
-  { name: 'GitHub', Icon: GithubIcon, url: 'https://github.com/rahultripathi' },
+  { name: 'GitHub', Icon: GithubIcon, url: 'https://github.com/techtotsandparents-max' },
   { name: 'YouTube', Icon: YoutubeIcon, url: 'https://youtube.com/@rahultripathi' },
   { name: 'LinkedIn', Icon: LinkedinIcon, url: 'https://www.linkedin.com/in/rahul-tripathi-a05a1693' },
   { name: 'X / Twitter', Icon: TwitterIcon, url: 'https://x.com/rahultripathi' },
@@ -620,19 +620,36 @@ export default function CurrentAdventureSection() {
           }
           .cas-stats-capsule {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
           }
         }
 
         @media (max-width: 640px) {
+          .cas-adventure-card {
+            padding: 20px 16px;
+            border-radius: 20px;
+          }
           .cas-body {
             flex-direction: column;
             align-items: stretch;
+            gap: 20px;
           }
           .cas-left-col {
             justify-content: space-between;
+            width: 100%;
           }
           .cas-arrow-btn--next {
-            align-self: flex-end;
+            align-self: center;
+          }
+          .cas-cards-slider {
+            width: 100%;
+            max-width: 100%;
+            -webkit-overflow-scrolling: touch;
+          }
+          .cas-item-card {
+            min-width: 115px;
+            height: 115px;
           }
         }
       `}</style>

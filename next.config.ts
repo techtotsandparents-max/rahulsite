@@ -59,6 +59,37 @@ const nextConfig: NextConfig = {
 
   // ── Standalone output for Azure Web App deployment ──
   output: "standalone",
+
+  // ── Route Redirects ──
+  async redirects() {
+    return [
+      {
+        source: "/rss.xml",
+        destination: "/blog",
+        permanent: false,
+      },
+      {
+        source: "/blog/the-post-developer-era",
+        destination: "https://www.joshwcomeau.com/blog/the-post-developer-era/",
+        permanent: false,
+      },
+      {
+        source: "/blog/the-post-developer-era-and-ai",
+        destination: "https://www.joshwcomeau.com/blog/the-post-developer-era/",
+        permanent: false,
+      },
+      {
+        source: "/policy",
+        destination: "/privacy",
+        permanent: true,
+      },
+      {
+        source: "/term",
+        destination: "/terms",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

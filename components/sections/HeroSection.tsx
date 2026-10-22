@@ -11,7 +11,7 @@ import { useWorldStore } from '@/stores/world.store';
 import { ParallaxStage } from './ParallaxStage';
 
 const socialLinks = [
-  { name: 'GitHub', Icon: GithubIcon, url: 'https://github.com/rahultripathi' },
+  { name: 'GitHub', Icon: GithubIcon, url: 'https://github.com/techtotsandparents-max' },
   { name: 'YouTube', Icon: YoutubeIcon, url: 'https://youtube.com/@rahultripathi' },
   { name: 'LinkedIn', Icon: LinkedinIcon, url: 'https://www.linkedin.com/in/rahul-tripathi-a05a1693' },
   { name: 'X / Twitter', Icon: TwitterIcon, url: 'https://x.com/rahultripathi' },
@@ -793,7 +793,8 @@ export default function HeroSection() {
         /* Large 3D Avatar Stage */
         .center-avatar-stage {
           position: relative;
-          width: 500px;
+          width: 100%;
+          max-width: 500px;
           height: 480px;
           display: flex;
           align-items: center;
@@ -977,6 +978,92 @@ export default function HeroSection() {
           width: 100%;
           height: 100%;
           display: block;
+        }
+
+        /* ─── Mobile Optimizations ─── */
+        @media (max-width: 768px) {
+          .hero-section {
+            padding-top: 85px;
+            min-height: auto;
+          }
+          .hero-container {
+            gap: 28px;
+          }
+          .hero-title {
+            font-size: clamp(1.85rem, 7.5vw, 2.8rem);
+            word-break: break-word;
+          }
+          .hero-subtitle {
+            font-size: 0.92rem;
+          }
+          .avatar-world-box {
+            height: 330px;
+            max-width: 100%;
+          }
+          .center-avatar-stage {
+            max-width: 320px;
+            height: 320px;
+          }
+          .sky-element--airplane {
+            transform: scale(0.65);
+            transform-origin: top right;
+            right: 0;
+            top: 5px;
+          }
+          .sky-element--balloon {
+            transform: scale(0.7);
+            transform-origin: top left;
+            left: 0;
+            top: 15px;
+          }
+          .sky-element--birds {
+            display: none;
+          }
+          .laptop-speech-bubble {
+            right: 5px;
+            top: 10px;
+            padding: 6px 10px;
+            font-size: 0.62rem;
+          }
+          .ai-companion-floating {
+            right: 5px;
+            bottom: 15px;
+            gap: 6px;
+          }
+          .ai-robot-head {
+            width: 38px;
+            height: 38px;
+            font-size: 1.15rem;
+          }
+          .ai-speech-bubble {
+            font-size: 0.62rem;
+            padding: 6px 8px;
+          }
+          .gear-interactive-hint {
+            top: 110px;
+            right: 5px;
+          }
+          .hero-social-row {
+            flex-wrap: wrap;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-cta-group {
+            flex-direction: column;
+            width: 100%;
+          }
+          .hero-cta-group .btn {
+            width: 100%;
+            justify-content: center;
+          }
+          .avatar-world-box {
+            height: 290px;
+          }
+          .center-avatar-stage {
+            max-width: 280px;
+            height: 280px;
+          }
         }
       `}</style>
     </section>
