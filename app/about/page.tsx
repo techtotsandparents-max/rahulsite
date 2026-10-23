@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowLeft, MapPin, Briefcase, Plane, Camera, Coffee } from 'lucide-react';
-import { GithubIcon, YoutubeIcon, LinkedinIcon, TwitterIcon, InstagramIcon } from '@/components/icons/SocialIcons';
+import { GithubIcon, YoutubeIcon, LinkedinIcon, TwitterIcon, InstagramIcon, ThreadsIcon } from '@/components/icons/SocialIcons';
 import Navbar from '@/components/navigation/Navbar';
 import SunsetFooter from '@/components/footer/SunsetFooter';
 import { useContent } from '@/components/admin/useContent';
@@ -14,11 +14,12 @@ const initialProfile = {
   title: 'Rahul Tripathi',
   subtitle: 'Cloud Architect • Builder • Traveller • Creator',
   content: 'I build technology, explore the world, and share what I learn. As a Cloud Architect, I design and implement scalable cloud-native solutions on Azure, working with Terraform, Kubernetes, and modern distributed systems.\n\nThrough my blog and YouTube channel, I share in-depth tutorials on cloud architecture, AI/ML concepts, and system design patterns — inspired by the teaching style of Andrej Karpathy.\n\nWhen I’m not architecting cloud solutions, I’m exploring new destinations, documenting my travels, and finding the best remote work spots around the globe.',
-  githubUrl: 'https://github.com/techtotsandparents-max',
+  githubUrl: 'https://github.com/tripathies',
   youtubeUrl: 'https://youtube.com/@rahultripathi',
   linkedinUrl: 'https://www.linkedin.com/in/rahul-tripathi-a05a1693',
   twitterUrl: 'https://x.com/rahultripathi',
-  instagramUrl: 'https://instagram.com/rahultripathi',
+  instagramUrl: 'https://www.instagram.com/tripathir01?cplk=MTlzc3V2czQ2bHE4eQ==',
+  threadsUrl: 'https://www.threads.com/@tripathir01',
 };
 
 const timeline = [
@@ -36,6 +37,7 @@ export default function AboutPage() {
     { name: 'LinkedIn', Icon: LinkedinIcon, url: profile.linkedinUrl },
     { name: 'X', Icon: TwitterIcon, url: profile.twitterUrl },
     { name: 'Instagram', Icon: InstagramIcon, url: profile.instagramUrl },
+    { name: 'Threads', Icon: ThreadsIcon, url: profile.threadsUrl || 'https://www.threads.com/@tripathir01' },
   ].filter((social) => social.url);
   return (
     <>

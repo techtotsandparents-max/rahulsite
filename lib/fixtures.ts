@@ -440,11 +440,12 @@ export const quickCards = [
 // ============================================================
 
 export const socialLinks = [
-  { name: 'GitHub', url: 'https://github.com/techtotsandparents-max', icon: 'github' },
+  { name: 'GitHub', url: 'https://github.com/tripathies', icon: 'github' },
   { name: 'YouTube', url: 'https://youtube.com/@rahultripathi', icon: 'youtube' },
   { name: 'LinkedIn', url: 'https://www.linkedin.com/in/rahul-tripathi-a05a1693', icon: 'linkedin' },
   { name: 'X / Twitter', url: 'https://x.com/rahultripathi', icon: 'twitter' },
-  { name: 'Instagram', url: 'https://instagram.com/rahultripathi', icon: 'instagram' },
+  { name: 'Instagram', url: 'https://www.instagram.com/tripathir01?cplk=MTlzc3V2czQ2bHE4eQ==', icon: 'instagram' },
+  { name: 'Threads', url: 'https://www.threads.com/@tripathir01', icon: 'threads' },
 ];
 
 // ============================================================

@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowLeft, Coffee, Mail, Send } from 'lucide-react';
-import { GithubIcon, LinkedinIcon, TwitterIcon } from '@/components/icons/SocialIcons';
+import { GithubIcon, LinkedinIcon, TwitterIcon, InstagramIcon, ThreadsIcon } from '@/components/icons/SocialIcons';
 import Navbar from '@/components/navigation/Navbar';
 import SunsetFooter from '@/components/footer/SunsetFooter';
 
@@ -109,7 +109,7 @@ export default function ContactPage() {
                 <Mail size={20} />
               </a>
               <a
-                href="https://github.com/techtotsandparents-max"
+                href="https://github.com/tripathies"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="glass-card glass-card-hover"
@@ -146,6 +146,32 @@ export default function ContactPage() {
                 aria-label="X"
               >
                 <TwitterIcon size={20} />
+              </a>
+              <a
+                href="https://www.instagram.com/tripathir01?cplk=MTlzc3V2czQ2bHE4eQ=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass-card glass-card-hover"
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  width: '48px', height: '48px', textDecoration: 'none', color: 'var(--text-secondary)',
+                }}
+                aria-label="Instagram"
+              >
+                <InstagramIcon size={20} />
+              </a>
+              <a
+                href="https://www.threads.com/@tripathir01"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass-card glass-card-hover"
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  width: '48px', height: '48px', textDecoration: 'none', color: 'var(--text-secondary)',
+                }}
+                aria-label="Threads"
+              >
+                <ThreadsIcon size={20} />
               </a>
             </div>
           </motion.div>

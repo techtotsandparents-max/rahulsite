@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Search, Volume2, Sun, Moon } from 'lucide-react';
-import { GithubIcon, LinkedinIcon, YoutubeIcon, TwitterIcon } from '@/components/icons/SocialIcons';
+import { GithubIcon, LinkedinIcon, YoutubeIcon, TwitterIcon, InstagramIcon, ThreadsIcon } from '@/components/icons/SocialIcons';
 
 // ─────────────────────────────────────────────
 // The galaxy-divider is a fixed-height container (420px).
@@ -486,7 +486,7 @@ export default function SunsetFooter() {
                 {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
               </button>
               <a
-                href="https://github.com/techtotsandparents-max"
+                href="https://github.com/tripathies"
                 target="_blank" rel="noopener noreferrer"
                 className="gf-tool-icon" aria-label="GitHub"
               >
@@ -498,6 +498,20 @@ export default function SunsetFooter() {
                 className="gf-tool-icon" aria-label="LinkedIn"
               >
                 <LinkedinIcon size={16} />
+              </a>
+              <a
+                href="https://www.instagram.com/tripathir01?cplk=MTlzc3V2czQ2bHE4eQ=="
+                target="_blank" rel="noopener noreferrer"
+                className="gf-tool-icon" aria-label="Instagram"
+              >
+                <InstagramIcon size={16} />
+              </a>
+              <a
+                href="https://www.threads.com/@tripathir01"
+                target="_blank" rel="noopener noreferrer"
+                className="gf-tool-icon" aria-label="Threads"
+              >
+                <ThreadsIcon size={16} />
               </a>
             </div>
           </div>

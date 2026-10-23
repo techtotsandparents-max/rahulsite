@@ -8,16 +8,17 @@ import {
   ChevronLeft, ChevronRight, MapPin, Globe,
   BookOpen, Play, Users, Code, Plane, ArrowRight, ExternalLink
 } from 'lucide-react';
-import { GithubIcon, YoutubeIcon, LinkedinIcon, TwitterIcon, InstagramIcon } from '@/components/icons/SocialIcons';
+import { GithubIcon, YoutubeIcon, LinkedinIcon, TwitterIcon, InstagramIcon, ThreadsIcon } from '@/components/icons/SocialIcons';
 import { adventureFixtures } from '@/lib/fixtures';
 import { useContent } from '@/components/admin/useContent';
 
 const SOCIAL_LINKS = [
-  { name: 'GitHub', Icon: GithubIcon, url: 'https://github.com/techtotsandparents-max' },
+  { name: 'GitHub', Icon: GithubIcon, url: 'https://github.com/tripathies' },
   { name: 'YouTube', Icon: YoutubeIcon, url: 'https://youtube.com/@rahultripathi' },
   { name: 'LinkedIn', Icon: LinkedinIcon, url: 'https://www.linkedin.com/in/rahul-tripathi-a05a1693' },
   { name: 'X / Twitter', Icon: TwitterIcon, url: 'https://x.com/rahultripathi' },
-  { name: 'Instagram', Icon: InstagramIcon, url: 'https://instagram.com/rahultripathi' },
+  { name: 'Instagram', Icon: InstagramIcon, url: 'https://www.instagram.com/tripathir01?cplk=MTlzc3V2czQ2bHE4eQ==' },
+  { name: 'Threads', Icon: ThreadsIcon, url: 'https://www.threads.com/@tripathir01' },
 ];
 
 const STATS = [
